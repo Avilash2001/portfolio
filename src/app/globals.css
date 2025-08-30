@@ -27,7 +27,13 @@ body {
   }
 }
 
-
+.gradient-text {
+  background: linear-gradient(to right, #ffca30, #ff01a2, #b94ddc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
 
 @layer base {
   :root {
@@ -84,8 +90,6 @@ body {
     --chart-5: 340 75% 55%;
   }
 }
-
-
 
 @layer base {
   * {

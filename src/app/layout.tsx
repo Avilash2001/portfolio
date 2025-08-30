@@ -3,6 +3,7 @@ import { Darker_Grotesque } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import SideBar from "@/components/SideBar";
+import Transition from "@/components/Transition";
 
 const font = Darker_Grotesque({ subsets: ["latin"] });
 
@@ -17,13 +18,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={font.className}>
-        <div className="h-full w-full relative">
-          <Header />
-          <SideBar />
-          {children}
-        </div>
+    <html lang="en" className={font.className}>
+      <body>
+        <Header />
+        <SideBar />
+        <main className="mx-auto max-w-7xl px-8 sm:px-16">
+          <Transition>{children}</Transition>
+        </main>
       </body>
     </html>
   );
