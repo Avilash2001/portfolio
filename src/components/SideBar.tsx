@@ -21,7 +21,7 @@ const SideBar = () => {
     },
   ];
   return (
-    <div className="absolute h-full top-0 left-0 hidden sm:flex flex-col items-center justify-center pl-[60px] gap-[40px]">
+    <div className="absolute h-full top-0 left-0 hidden xl:flex flex-col items-center justify-center pl-16 gap-[40px]">
       {socialMedia.map((item) => (
         <Image
           key={item.name}

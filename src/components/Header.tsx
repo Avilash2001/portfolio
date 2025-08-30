@@ -1,33 +1,38 @@
 import React from "react";
 import Image from "next/image";
-import { MenuIcon } from "lucide-react";
+import { Cog, Contact, FolderKanban, MenuIcon, User } from "lucide-react";
 import Link from "next/link";
+import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 
 const Header = () => {
   const headerItems = [
     {
       name: "About Me",
       link: "/about",
+      icon: <User size={"20px"} />,
     },
     {
       name: "Skills",
       link: "/skills",
+      icon: <Cog size={"20px"} />,
     },
     {
       name: "Projects",
       link: "/projects",
+      icon: <FolderKanban size={"20px"} />,
     },
     {
       name: "Contact Me",
       link: "/contact",
+      icon: <Contact size={"20px"} />,
     },
   ];
 
   return (
-    <nav className="sticky top-0 z-50 flex items-center justify-between h-24 px-8 sm:px-16">
+    <nav className="flex items-center justify-between h-24 px-8 sm:px-16 bg-[--color-background]/10 backdrop-blur">
       <Link href={"/"}>
         <Image
-          className="cursor-pointer h-10 sm:h-12 w-fit"
+          className="cursor-pointer h-8 sm:h-12 w-fit"
           src="/logo.svg"
           alt="My SVG"
           width={400}
@@ -35,7 +40,27 @@ const Header = () => {
         />
       </Link>
 
-      <MenuIcon color="white" className="lg:hidden" />
+      <Drawer>
+        <DrawerTrigger>
+          <MenuIcon color="white" className="lg:hidden" />
+        </DrawerTrigger>
+        <DrawerContent className="bg-[#0f0f0f] border-[#0f0f0f]">
+          <div className="grid grid-cols-2 p-4 gap-4">
+            {headerItems.map((item) => (
+              <Link
+                className="cursor-pointer font-semibold w-full gradient-border p-6 flex items-center justify-center rounded-xl gap-3"
+                key={item.name}
+                href={item.link}
+              >
+                {item.icon}
+                {item.name}
+              </Link>
+            ))}
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      {/* <MenuIcon color="white" className="lg:hidden" /> */}
 
       <div className="hidden lg:flex gap-10">
         {headerItems.map((item) => (

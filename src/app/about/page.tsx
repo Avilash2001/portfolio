@@ -18,10 +18,10 @@ const AboutPage = () => {
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row h-full gap-10 justify-evenly items-center px-8 sm:px-16 pt-24 lg:mt-0">
+    <div className="flex flex-col lg:flex-row h-full gap-10 justify-evenly items-center sm:px-16 pb-10 sm:pt-24 lg:mt-0">
       <div className="flex flex-col gap-10">
         <div className="flex flex-col gap-5">
-          <p className="text-5xl">Nice to meet you!</p>
+          <p className="text-4xl sm:text-5xl">Nice to meet you!</p>
           <p className="text-lg">
             Since beginning my journey 6 years ago, I&apos;ve done remote work
             for agencies, worked in startups, and collaborated with talented
@@ -31,8 +31,8 @@ const AboutPage = () => {
           </p>
         </div>
         <div className="flex flex-col gap-5">
-          <p className="text-5xl">My specialties?</p>
-          <div className="flex gap-5">
+          <p className="text-4xl sm:text-5xl">My specialties?</p>
+          <div className="flex flex-col sm:flex-row gap-5">
             {specialties.map(({ text, title }) => (
               <div key={text}>
                 <p className="gradient-text text-xl font-bold">{title}</p>

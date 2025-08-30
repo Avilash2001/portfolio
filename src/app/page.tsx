@@ -4,7 +4,7 @@ export default function Home() {
   const data = ["Software Developer", "UI/UX Designer", "Digital Marketer"];
 
   return (
-    <div className="flex flex-col lg:flex-row h-full gap-20 justify-evenly items-center px-8 sm:px-16 pt-24 lg:mt-0">
+    <div className="flex flex-col lg:flex-row h-full gap-20 justify-evenly items-center px-8 sm:px-16 py-10 sm:pt-24 lg:mt-0">
       <Image src="/face2.svg" alt="My SVG" width={400} height={400} />
       <div className="lg:h-full flex flex-col justify-center">
         <div className="hidden lg:block">

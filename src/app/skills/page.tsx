@@ -1,14 +1,24 @@
 "use client";
 import SkillCard from "@/components/SkillCard";
 import Transition from "@/components/Transition";
+import useIsMobile from "@/hooks/useIsMobile";
 import { skillList } from "@/lib/data";
 import { Job } from "@/lib/types";
-import { Pause, Play } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  Pause,
+  Play,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 const SkillsPage = () => {
   const [selectedJob, setSelectedJob] = useState<Job>("Software Developer");
   const [isRotating, setIsRotating] = useState<boolean>(true);
+
+  const isMobile = useIsMobile();
 
   const changeRob = (dir: "up" | "down") => {
     switch (selectedJob) {
@@ -26,35 +36,49 @@ const SkillsPage = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (isRotating) changeRob("down");
+      if (isRotating && !isMobile) changeRob("down");
     }, 3000);
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedJob, isRotating]);
+  }, [selectedJob, isRotating, isMobile]);
 
   return (
-    <div className="w-full">
-      <div className="flex items-center gap-3">
-        <p className="text-3xl sm:text-5xl">My skills as a </p>
-        <Transition key={selectedJob} direction="ttb" pos={20}>
-          <p
-            className="text-3xl sm:text-5xl gradient-text font-bold cursor-pointer inline-flex items-center gap-2 "
-            onClick={() => setIsRotating((prev) => !prev)}
-          >
-            {selectedJob}
-          </p>
-        </Transition>{" "}
+    <div className="w-full pb-10">
+      <div className="flex flex-col md:flex-row items-center gap-3">
+        <p className="text-3xl md:text-5xl">My skills as a </p>
+        <div className="flex gap-2">
+          <ChevronLeft
+            color="white"
+            className="md:hidden cursor-pointer self-end "
+            size={"30px"}
+            onClick={() => changeRob("up")}
+          />
+          <Transition key={selectedJob} direction="ttb" pos={20}>
+            <p
+              className="text-3xl md:text-5xl gradient-text font-bold cursor-pointer inline-flex items-center gap-2 "
+              onClick={() => setIsRotating((prev) => !prev)}
+            >
+              {selectedJob}
+            </p>
+          </Transition>
+          <ChevronRight
+            color="white"
+            className="md:hidden cursor-pointer self-end"
+            size={"30px"}
+            onClick={() => changeRob("up")}
+          />
+        </div>
         {isRotating ? (
           <Pause
             fill="white"
-            className="cursor-pointer self-end"
+            className="hidden md:block cursor-pointer self-end"
             size={"16px"}
             onClick={() => setIsRotating((prev) => !prev)}
           />
         ) : (
           <Play
             fill="white"
-            className="cursor-pointer self-end"
+            className="hidden md:block cursor-pointer self-end"
             size={"16px"}
             onClick={() => setIsRotating((prev) => !prev)}
           />

@@ -35,6 +35,14 @@ body {
   color: transparent;
 }
 
+.gradient-border {
+  background: linear-gradient(var(--color-background), var(--color-background))
+      padding-box,
+    linear-gradient(to right, #ffca30, #ff01a2, #b94ddc) border-box;
+  border-radius: 0.75rem;
+  border: 1px solid transparent;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
