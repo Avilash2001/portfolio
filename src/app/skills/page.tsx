@@ -4,14 +4,7 @@ import Transition from "@/components/Transition";
 import useIsMobile from "@/hooks/useIsMobile";
 import { skillList } from "@/lib/data";
 import { Job } from "@/lib/types";
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  Pause,
-  Play,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 const SkillsPage = () => {

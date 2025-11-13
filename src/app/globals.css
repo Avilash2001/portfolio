@@ -5,12 +5,16 @@
 :root {
   --color-text: #fff;
   --color-background: #0a0a0a;
+  --color-main: #0a0a0a;
+  --color-main-accent: #0f0f0f;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --color-text: #fff;
     --color-background: #0a0a0a;
+    --color-main: #0a0a0a;
+    --color-main-accent: #0f0f0f;
   }
 }
 
@@ -70,6 +74,8 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --main: var(--color-main);
+    --main-accent: var(--color-main-accent);
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -96,6 +102,8 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --main: var(--color-main);
+    --main-accent: var(--color-main-accent);
   }
 }
 
