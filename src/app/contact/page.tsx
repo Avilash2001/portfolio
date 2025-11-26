@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Mail, MapPin, Phone, Send, ArrowRight } from "lucide-react";
+import { Mail, MapPin, Phone, Send, Loader2 } from "lucide-react";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -10,15 +10,48 @@ const ContactPage = () => {
     message: "",
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
+    setIsSubmitting(true);
+    setSuccessMessage("");
+
+    const data = {
+      access_key: process.env.NEXT_PUBLIC_WEB_3_FORMS_API_KEY,
+      ...formData,
+    };
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSuccessMessage("Message sent successfully!");
+        setFormData({ name: "", email: "", subject: "", message: "" });
+      } else {
+        setSuccessMessage("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      setSuccessMessage("Error sending message.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -76,7 +109,6 @@ const ContactPage = () => {
         </div>
       </div>
 
-      {/* Right Side: Form */}
       <div className="w-full lg:w-1/2 bg-white/5 backdrop-blur-sm p-8 rounded-2xl border border-white/10 shadow-xl">
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
@@ -141,16 +173,28 @@ const ContactPage = () => {
 
           <button
             type="submit"
-            className="mt-4 group relative flex items-center justify-center gap-3 bg-gradient-to-r from-[#FFCA30] via-[#FF01A2] to-[#B94DDC] py-4 rounded-full text-white font-bold text-lg overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]"
+            disabled={isSubmitting}
+            className="mt-4 group relative flex items-center justify-center gap-3 bg-gradient-to-r from-[#FFCA30] via-[#FF01A2] to-[#B94DDC] py-4 rounded-full text-white font-bold text-lg overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            <span className="relative z-10 flex items-center gap-2">
-              Send Message{" "}
-              <Send
-                size={20}
-                className="group-hover:translate-x-1 transition-transform"
-              />
-            </span>
+            {isSubmitting ? (
+              <span className="relative z-10 flex items-center gap-2">
+                Sending... <Loader2 className="animate-spin" size={20} />
+              </span>
+            ) : (
+              <span className="relative z-10 flex items-center gap-2">
+                Send Message
+                <Send
+                  size={20}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
+              </span>
+            )}
           </button>
+          {successMessage && (
+            <p className="text-center text-green-400 mt-2 font-semibold">
+              {successMessage}
+            </p>
+          )}
         </form>
       </div>
     </div>
