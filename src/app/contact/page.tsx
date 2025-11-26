@@ -76,7 +76,7 @@ const ContactPage = () => {
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row w-full h-full gap-10 lg:gap-20 justify-between items-start lg:items-center px-4 sm:px-0 py-10 sm:pt-20 lg:mt-0 pb-20">
+    <div className="flex flex-col lg:flex-row w-full h-full gap-10 lg:gap-20 justify-between items-start lg:items-center px-0 lg:px-4 py-10 sm:pt-20 lg:mt-0 pb-20">
       <div className="flex flex-col gap-8 w-full lg:w-1/2">
         <div className="flex flex-col gap-4">
           <p className="text-4xl sm:text-6xl font-bold">
