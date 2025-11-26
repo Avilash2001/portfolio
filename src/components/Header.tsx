@@ -1,10 +1,13 @@
-import React from "react";
+"use client"
+import React, { useRef } from "react";
 import Image from "next/image";
 import { Cog, Contact, FolderKanban, MenuIcon, User } from "lucide-react";
 import Link from "next/link";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 
 const Header = () => {
+  const drawerTriggerRef = useRef<HTMLButtonElement>(null);
+
   const headerItems = [
     {
       name: "About Me",
@@ -28,6 +31,10 @@ const Header = () => {
     },
   ];
 
+  const handleDrawerClose = () => {
+    drawerTriggerRef.current?.click();
+  };
+
   return (
     <nav className="flex items-center justify-between h-24 px-8 sm:px-16 bg-[--color-background]/10 backdrop-blur">
       <Link href={"/"}>
@@ -41,7 +48,7 @@ const Header = () => {
       </Link>
 
       <Drawer>
-        <DrawerTrigger>
+        <DrawerTrigger ref={drawerTriggerRef}>
           <MenuIcon color="white" className="lg:hidden" />
         </DrawerTrigger>
         <DrawerContent className="bg-[#0f0f0f] border-[#0f0f0f]">
@@ -51,6 +58,7 @@ const Header = () => {
                 className="cursor-pointer font-semibold w-full gradient-border p-6 flex items-center justify-center rounded-xl gap-3"
                 key={item.name}
                 href={item.link}
+                onClick={handleDrawerClose}
               >
                 {item.icon}
                 {item.name}
@@ -59,8 +67,6 @@ const Header = () => {
           </div>
         </DrawerContent>
       </Drawer>
-
-      {/* <MenuIcon color="white" className="lg:hidden" /> */}
 
       <div className="hidden lg:flex gap-10">
         {headerItems.map((item) => (
