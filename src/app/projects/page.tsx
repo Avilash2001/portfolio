@@ -180,7 +180,7 @@ const ProjectsPage = () => {
   const orbits = useMemo(() => chunkArray(ALL_PROJECTS, 3), []);
 
   const BASE_RADIUS = 120;
-  const RING_GAP = 70;
+  const RING_GAP = 60;
   const BASE_DURATION = 20;
 
   return (
@@ -193,7 +193,7 @@ const ProjectsPage = () => {
       </p>
 
       <div className="hidden md:flex w-full flex-col items-center justify-center overflow-hidden font-sans relative">
-        <div className="relative w-[750px] h-[750px] flex items-center justify-center scale-[0.6] sm:scale-[0.8] md:scale-100 transition-transform duration-500">
+        <div className="relative w-[700px] h-[700px] flex items-center justify-center scale-[0.6] sm:scale-[0.8] md:scale-100 transition-transform duration-500">
           <div className="relative z-20">
             <motion.div
               className="absolute inset-0 bg-gradient-to-r from-[#ffca30] via-[#ff01a2] to-[#b94ddc] rounded-full blur-2xl"

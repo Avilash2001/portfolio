@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import React from "react";
 
@@ -5,19 +6,19 @@ const SideBar = () => {
   const socialMedia = [
     {
       name: "facebook",
-      url: "https://www.facebook.com/",
+      url: "https://www.facebook.com/avilash2001",
     },
     {
       name: "instagram",
-      url: "https://www.instagram.com/",
+      url: "https://www.instagram.com/smotato.ts",
     },
     {
       name: "linkedin",
-      url: "https://www.linkedin.com/",
+      url: "https://www.linkedin.com/in/avilashg",
     },
     {
       name: "github",
-      url: "https://www.github.com/",
+      url: "https://github.com/Avilash2001",
     },
   ];
   return (
@@ -32,6 +33,9 @@ const SideBar = () => {
           alt="My SVG"
           width={20}
           height={20}
+          onClick={() => {
+            window.open(item.url, "_blank");
+          }}
         />
       ))}
     </div>
