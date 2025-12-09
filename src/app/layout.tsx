@@ -4,7 +4,9 @@ import "./globals.css";
 import Header from "@/components/Header";
 import SideBar from "@/components/SideBar";
 import Transition from "@/components/Transition";
-import StarBackground from "@/components/StarBackground";
+import StarBackgroundDeflect from "@/components/StarBackgroundDeflect";
+import SpaceshipCursor from "@/components/SpaceshipCursor"; // Import
+import StarBackgroundDistort from "@/components/StarBackgroundDistort";
 
 const font = Darker_Grotesque({ subsets: ["latin"] });
 
@@ -21,7 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={font.className}>
       <body className="relative min-h-screen text-white max-w-[100vw]">
-        <StarBackground />
+        {/* <body className="relative min-h-screen text-white max-w-[100vw] cursor-none selection:bg-cyan-500/30"> */}
+        {/* <SpaceshipCursor /> */}
+        {/* <StarBackgroundDeflect /> */}
+        <StarBackgroundDistort />
         <div className="relative z-10 h-full">
           <Header />
           <SideBar />

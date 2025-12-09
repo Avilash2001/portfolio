@@ -10,7 +10,7 @@ interface Star {
   color: string;
 }
 
-const StarBackground = () => {
+const StarBackgroundDeflect = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -23,8 +23,15 @@ const StarBackground = () => {
     let width = window.innerWidth;
     let height = window.innerHeight;
 
+    // Mouse state (screen coords)
+    const mouse = {
+      x: 0,
+      y: 0,
+      active: false,
+    };
+
     // Base configuration
-    const baseStarCount = 1000; // desktop default
+    const baseStarCount = 2000; // desktop default
     let depthMultiplier = 1; // increased on mobile to push stars further back
     let baseSpeed = 0.5;
     let stars: Star[] = [];
@@ -56,7 +63,6 @@ const StarBackground = () => {
     const initStars = () => {
       stars.length = 0;
 
-      // Simple mobile detection - tweak breakpoint as needed
       const isMobile = width < 768;
 
       depthMultiplier = isMobile ? 2.5 : 1;
@@ -86,6 +92,24 @@ const StarBackground = () => {
       initStars();
     };
 
+    const handleMouseMove = (e: MouseEvent) => {
+      // ignore on small screens
+      if (window.innerWidth < 768) return;
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      mouse.active = true;
+    };
+
+    const handleMouseLeave = () => {
+      mouse.active = false;
+    };
+
+    window.addEventListener("resize", resize);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseleave", handleMouseLeave);
+
+    let animationFrameId: number;
+
     const animate = () => {
       ctx.fillStyle = "rgba(0, 0, 0, 1)";
       ctx.fillRect(0, 0, width, height);
@@ -93,6 +117,9 @@ const StarBackground = () => {
       const cx = width / 2;
       const cy = height / 2;
       const isMobile = width < 768;
+
+      const influenceRadius = isMobile ? 0 : 140; // px around mouse
+      const maxPush = 14; // strength of repulsion
 
       stars.forEach((star) => {
         // Move star closer
@@ -106,18 +133,39 @@ const StarBackground = () => {
           star.y = Math.random() * height - height / 2;
         }
 
-        // Project 3D -> 2D
-        const x = cx + (star.x / star.z) * width;
-        const y = cy + (star.y / star.z) * width;
+        // Project 3D -> 2D (initial)
+        let x = cx + (star.x / star.z) * width;
+        let y = cy + (star.y / star.z) * width;
+
+        // Mouse force field (repel nearby stars)
+        if (mouse.active && !isMobile && influenceRadius > 0) {
+          const dx = x - mouse.x;
+          const dy = y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < influenceRadius && dist > 0.1) {
+            const force = (influenceRadius - dist) / influenceRadius; // 0–1
+            const push = force * maxPush;
+
+            const nx = dx / dist;
+            const ny = dy / dist;
+
+            // Push original 3D coords slightly away
+            star.x += nx * push;
+            star.y += ny * push;
+
+            // Re-project after deflection
+            x = cx + (star.x / star.z) * width;
+            y = cy + (star.y / star.z) * width;
+          }
+        }
 
         // Size scales with depthMultiplier and smaller on mobile
         const sizeFactor = isMobile ? 1.0 : 2.5;
         const rawSize = (1 - star.z / (width * depthMultiplier)) * sizeFactor;
         const size = Math.max(0.35, rawSize);
 
-        const opacity = Math.max(0.12, 1 - star.z / (width * depthMultiplier));
         ctx.fillStyle = hexToRgba(star.color, 0.5);
-
         ctx.beginPath();
         ctx.arc(x, y, size, 0, Math.PI * 2);
         ctx.fill();
@@ -125,24 +173,25 @@ const StarBackground = () => {
         star.pz = star.z;
       });
 
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
     };
 
-    window.addEventListener("resize", resize);
-    const animationId = requestAnimationFrame(animate);
+    animationFrameId = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener("resize", resize);
-      cancelAnimationFrame(animationId);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseleave", handleMouseLeave);
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 w-full h-full -z-10 bg-black pointer-events-none"
+      className="fixed top-0 left-0 w-full h-full -z-10 bg-black"
     />
   );
 };
 
-export default StarBackground;
+export default StarBackgroundDeflect;
