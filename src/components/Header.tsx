@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useRef } from "react";
 import Image from "next/image";
 import { Cog, Contact, FolderKanban, MenuIcon, User } from "lucide-react";
@@ -36,7 +36,7 @@ const Header = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between h-24 px-8 sm:px-16 bg-[--color-background]/10 backdrop-blur">
+    <nav className="flex items-center justify-between h-24 px-8 sm:px-16">
       <Link href={"/"}>
         <Image
           className="cursor-pointer h-8 sm:h-12 w-fit"

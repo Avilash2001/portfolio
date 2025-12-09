@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import SideBar from "@/components/SideBar";
 import Transition from "@/components/Transition";
+import StarBackground from "@/components/StarBackground";
 
 const font = Darker_Grotesque({ subsets: ["latin"] });
 
@@ -19,12 +20,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={font.className}>
-      <body>
-        <Header />
-        <SideBar />
-        <main className="mx-auto max-w-7xl px-8 sm:px-16">
-          <Transition>{children}</Transition>
-        </main>
+      <body className="relative min-h-screen text-white max-w-[100vw]">
+        <StarBackground />
+        <div className="relative z-10 h-full">
+          <Header />
+          <SideBar />
+          <main className="mx-auto max-w-7xl px-8 sm:px-16">
+            <Transition>{children}</Transition>
+          </main>
+        </div>
       </body>
     </html>
   );

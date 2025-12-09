@@ -1,87 +1,111 @@
 "use client";
 import SkillCard from "@/components/SkillCard";
 import Transition from "@/components/Transition";
-import useIsMobile from "@/hooks/useIsMobile";
 import { skillList } from "@/lib/data";
 import { Job } from "@/lib/types";
-import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+
+const JOBS: Job[] = [
+  "Software Developer",
+  "UI/UX Designer",
+  "Digital Marketer",
+];
 
 const SkillsPage = () => {
-  const [selectedJob, setSelectedJob] = useState<Job>("Software Developer");
-  const [isRotating, setIsRotating] = useState<boolean>(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const selectedJob = JOBS[currentIndex];
 
-  const isMobile = useIsMobile();
-
-  const changeRob = (dir: "up" | "down") => {
-    switch (selectedJob) {
-      case "Software Developer":
-        setSelectedJob(dir == "up" ? "UI/UX Designer" : "Digital Marketer");
-        break;
-      case "UI/UX Designer":
-        setSelectedJob(dir == "up" ? "Digital Marketer" : "Software Developer");
-        break;
-      case "Digital Marketer":
-        setSelectedJob(dir == "up" ? "Software Developer" : "UI/UX Designer");
-        break;
+  const changeJob = (direction: "left" | "right") => {
+    if (direction === "left") {
+      setCurrentIndex((prev) => (prev - 1 + JOBS.length) % JOBS.length);
+    } else {
+      setCurrentIndex((prev) => (prev + 1) % JOBS.length);
     }
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isRotating && !isMobile) changeRob("down");
-    }, 3000);
-    return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedJob, isRotating, isMobile]);
-
   return (
     <div className="w-full pb-10">
-      <div className="flex flex-col md:flex-row items-center gap-3">
-        <p className="text-3xl md:text-5xl">My skills as a </p>
-        <div className="flex gap-2">
-          <ChevronLeft
-            color="white"
-            className="md:hidden cursor-pointer self-end "
-            size={"30px"}
-            onClick={() => changeRob("up")}
-          />
-          <Transition key={selectedJob} direction="ttb" pos={20}>
-            <p
-              className="text-3xl md:text-5xl gradient-text font-bold cursor-pointer inline-flex items-center gap-2 "
-              onClick={() => setIsRotating((prev) => !prev)}
-            >
-              {selectedJob}
-            </p>
-          </Transition>
-          <ChevronRight
-            color="white"
-            className="md:hidden cursor-pointer self-end"
-            size={"30px"}
-            onClick={() => changeRob("up")}
-          />
+      {/* Container for Text + Slider */}
+      <div className="flex flex-col items-center justify-start gap-4 xl:gap-10 mb-10">
+        {/* Static Title */}
+        <p className="text-xl font-medium shrink-0">My skills as a</p>
+
+        {/* The Horizontal Carousel Container */}
+        <div className="relative h-[40px] w-full max-w-[600px] flex items-center justify-center overflow-hidden">
+          {/* Left/Right Fade Masks for depth */}
+          <div className="absolute left-0 w-[50px] h-full bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 w-[50px] h-full bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
+
+          {/* Left Arrow */}
+          <div
+            className="absolute left-2 z-20 cursor-pointer hover:scale-110 transition-transform opacity-50 hover:opacity-100"
+            onClick={() => changeJob("left")}
+          >
+            <ChevronLeft color="white" size={30} />
+          </div>
+
+          {/* The Sliding Items */}
+          <div className="relative w-full h-full flex justify-center items-center">
+            {JOBS.map((job, index) => {
+              let offset = index - currentIndex;
+              if (offset === -2) offset = 1;
+              if (offset === 2) offset = -1;
+
+              const isActive = offset === 0;
+
+              return (
+                <motion.div
+                  key={job}
+                  className="absolute flex items-center justify-center cursor-pointer"
+                  initial={false}
+                  animate={{
+                    x: offset * 250,
+                    scale: isActive ? 1 : 0.6,
+                    opacity: isActive ? 1 : 0.2,
+                    zIndex: isActive ? 10 : 0,
+                    rotateY: offset * -25,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20,
+                  }}
+                  onClick={() => {
+                    if (offset === -1) changeJob("left");
+                    if (offset === 1) changeJob("right");
+                  }}
+                >
+                  <span
+                    className={`font-bold text-center whitespace-nowrap transition-colors duration-300 ${
+                      isActive
+                        ? "text-3xl md:text-5xl gradient-text"
+                        : "text-2xl text-white"
+                    }`}
+                  >
+                    {job}
+                  </span>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Right Arrow */}
+          <div
+            className="absolute right-2 z-20 cursor-pointer hover:scale-110 transition-transform opacity-50 hover:opacity-100"
+            onClick={() => changeJob("right")}
+          >
+            <ChevronRight color="white" size={30} />
+          </div>
         </div>
-        {isRotating ? (
-          <Pause
-            fill="white"
-            className="hidden md:block cursor-pointer self-end"
-            size={"16px"}
-            onClick={() => setIsRotating((prev) => !prev)}
-          />
-        ) : (
-          <Play
-            fill="white"
-            className="hidden md:block cursor-pointer self-end"
-            size={"16px"}
-            onClick={() => setIsRotating((prev) => !prev)}
-          />
-        )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[40px] mt-[40px]">
+      {/* Grid of Skills */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[40px] mt-[20px]">
         {skillList[selectedJob].map((skill, index) => (
           <Transition
-            key={skill.title}
+            key={`${selectedJob}-${skill.title}`}
             pos={10}
             delay={index / 10}
             direction={index % 2 === 0 ? "ltr" : "rtl"}
