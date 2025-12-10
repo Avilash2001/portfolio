@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 interface Project {
   id: string;
@@ -199,7 +200,10 @@ const ProjectsPage = () => {
       {/* DESKTOP */}
       <div className="hidden md:flex w-full justify-center overflow-hidden font-sans relative">
         <motion.div
-          className="w-full max-w-6xl px-4 flex flex-col items-center gap-10"
+          className={cn(
+            "w-full max-w-6xl px-4 flex flex-col items-center gap-10",
+            selectedProject && "mt-14"
+          )}
           layout
         >
           <AnimatePresence mode="wait">
