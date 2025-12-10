@@ -161,7 +161,7 @@ const StarBackgroundDeflect = () => {
         }
 
         // Size scales with depthMultiplier and smaller on mobile
-        const sizeFactor = isMobile ? 1.0 : 2.5;
+        const sizeFactor = isMobile ? 1.5 : 2.5;
         const rawSize = (1 - star.z / (width * depthMultiplier)) * sizeFactor;
         const size = Math.max(0.35, rawSize);
 
