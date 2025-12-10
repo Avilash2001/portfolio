@@ -31,7 +31,7 @@ const StarBackgroundDeflect = () => {
     };
 
     // Base configuration
-    const baseStarCount = 2000; // desktop default
+    const baseStarCount = 10000; // desktop default
     let depthMultiplier = 1; // increased on mobile to push stars further back
     let baseSpeed = 0.5;
     let stars: Star[] = [];

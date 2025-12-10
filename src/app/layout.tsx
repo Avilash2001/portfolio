@@ -25,8 +25,8 @@ export default function RootLayout({
       <body className="relative min-h-screen text-white max-w-[100vw]">
         {/* <body className="relative min-h-screen text-white max-w-[100vw] cursor-none selection:bg-cyan-500/30"> */}
         {/* <SpaceshipCursor /> */}
-        {/* <StarBackgroundDeflect /> */}
-        <StarBackgroundDistort />
+        <StarBackgroundDeflect />
+        {/* <StarBackgroundDistort /> */}
         <div className="relative z-10 h-full">
           <Header />
           <SideBar />

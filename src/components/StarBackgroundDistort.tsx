@@ -26,7 +26,7 @@ const StarBackground = () => {
     let height = window.innerHeight;
 
     // Configuration
-    const baseStarCount = 1000;
+    const baseStarCount = 10000;
     let depthMultiplier = 1;
     let baseSpeed = 0.5;
     let stars: Star[] = [];
