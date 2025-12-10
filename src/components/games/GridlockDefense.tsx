@@ -13,12 +13,10 @@ import {
   Skull,
 } from "lucide-react";
 
-// --- CONFIG ---
 const GRID_W = 20;
 const GRID_H = 15;
 const CELL_SIZE = 30;
 
-// --- TYPES ---
 type NodeType =
   | "EMPTY"
   | "WALL"
@@ -48,8 +46,8 @@ interface Enemy {
   speed: number;
   type: EnemyType;
   shield: number;
-  maxShield: number; // Shield blocks hits count
-  armor: number; // Flat damage reduction
+  maxShield: number;
+  armor: number;
   path: Node[];
   color: string;
 }
@@ -62,7 +60,7 @@ interface Projectile {
   damage: number;
   speed: number;
   color: string;
-  type: "KINETIC" | "ENERGY" | "EXPLOSIVE"; // Damage types
+  type: "KINETIC" | "ENERGY" | "EXPLOSIVE";
 }
 
 interface TowerStats {
@@ -109,7 +107,6 @@ const TOWERS: Record<string, TowerStats> = {
   },
 };
 
-// --- PATHFINDING ---
 const getPath = (
   grid: Node[][],
   start: Node,
@@ -159,7 +156,7 @@ const getPath = (
 
       if (ny >= 0 && ny < GRID_H && nx >= 0 && nx < GRID_W) {
         const neighbor = grid[ny][nx];
-        // AIR units ignore walls, Ground units respect them
+
         if (closedList.has(neighbor)) continue;
         if (
           !ignoreWalls &&
@@ -191,7 +188,6 @@ const getPath = (
 };
 
 export default function GridlockDefense() {
-  // UI State
   const [money, setMoney] = useState(200);
   const [lives, setLives] = useState(10);
   const [wave, setWave] = useState(1);
@@ -206,7 +202,6 @@ export default function GridlockDefense() {
   const frameCount = useRef(0);
   const isPlayingRef = useRef(false);
 
-  // Game Entities
   const grid = useRef<Node[][]>([]);
   const enemies = useRef<Enemy[]>([]);
   const projectiles = useRef<Projectile[]>([]);
@@ -217,7 +212,6 @@ export default function GridlockDefense() {
   const endNode = useRef({ x: 19, y: 7 });
   const cachedPath = useRef<Node[]>([]);
 
-  // Wave Logic State
   const waveState = useRef({
     enemiesSpawned: 0,
     enemiesToSpawn: 0,
@@ -225,7 +219,6 @@ export default function GridlockDefense() {
     currentType: "BASIC" as EnemyType,
   });
 
-  // --- INIT ---
   const initGrid = () => {
     const newGrid: Node[][] = [];
     for (let y = 0; y < GRID_H; y++) {
@@ -254,7 +247,6 @@ export default function GridlockDefense() {
       enemies.current.length === 0 &&
       waveState.current.enemiesSpawned >= waveState.current.enemiesToSpawn
     ) {
-      // Start next wave
       setupWave(wave);
     }
     setIsPlaying(!isPlaying);
@@ -262,25 +254,21 @@ export default function GridlockDefense() {
   };
 
   const setupWave = (w: number) => {
-    // Hardcore Wave Logic
     let count = 5 + Math.floor(w * 1.5);
     let type: EnemyType = "BASIC";
-    let spawnRate = 60; // Slower spawn = easier
+    let spawnRate = 60;
 
     if (w % 5 === 0) {
-      // Boss / Tank Wave
       type = "TANK";
       count = 3 + Math.floor(w / 5);
       spawnRate = 120;
       setNextWaveInfo(`Wave ${w}: HEAVY ARMOR (Need Snipers)`);
     } else if (w % 3 === 0) {
-      // Air Wave
       type = "AIR";
       count = 5 + w;
       spawnRate = 50;
       setNextWaveInfo(`Wave ${w}: AIR RAID (Ignore Walls!)`);
     } else if (w % 2 === 0) {
-      // Swarm Wave
       type = "SWARM";
       count = 10 + w * 2;
       spawnRate = 25;
@@ -297,7 +285,6 @@ export default function GridlockDefense() {
     };
   };
 
-  // --- LOOP ---
   const loop = () => {
     if (isPlayingRef.current && !gameOver) update();
     draw();
@@ -308,27 +295,23 @@ export default function GridlockDefense() {
     frameCount.current++;
     const g = grid.current;
 
-    // 1. Spawner Logic
     if (waveState.current.enemiesSpawned < waveState.current.enemiesToSpawn) {
       if (frameCount.current % waveState.current.spawnCooldown === 0) {
         spawnEnemy(waveState.current.currentType);
         waveState.current.enemiesSpawned++;
       }
     } else if (enemies.current.length === 0) {
-      // Wave Complete
       setIsPlaying(false);
       isPlayingRef.current = false;
       setWave((w) => w + 1);
-      setMoney((m) => m + 50 + wave * 10); // Completion bonus
+      setMoney((m) => m + 50 + wave * 10);
       setupWave(wave + 1);
       return;
     }
 
-    // 2. Update Enemies
     for (let i = enemies.current.length - 1; i >= 0; i--) {
       const e = enemies.current[i];
 
-      // Move logic
       if (e.path.length > 0) {
         const target = e.path[0];
         const tx = target.x * CELL_SIZE + CELL_SIZE / 2;
@@ -344,7 +327,6 @@ export default function GridlockDefense() {
           e.y += ((ty - e.y) / dist) * e.speed;
         }
       } else {
-        // Reached End
         setLives((l) => {
           const nl = l - 1;
           if (nl <= 0) {
@@ -358,11 +340,9 @@ export default function GridlockDefense() {
       }
     }
 
-    // 3. Towers Fire
     towers.current.forEach((t) => {
       const stats = TOWERS[t.type];
       if (frameCount.current - t.lastShot > stats.cooldown) {
-        // Find best target (Lowest HP? Closest?) -> Closest for now
         const target = enemies.current.find(
           (e) =>
             Math.hypot(
@@ -387,7 +367,6 @@ export default function GridlockDefense() {
       }
     });
 
-    // 4. Projectiles
     for (let i = projectiles.current.length - 1; i >= 0; i--) {
       const p = projectiles.current[i];
       const target = enemies.current.find((e) => e.id === p.targetId);
@@ -398,28 +377,24 @@ export default function GridlockDefense() {
 
       const dist = Math.hypot(target.x - p.x, target.y - p.y);
       if (dist < p.speed) {
-        // HIT LOGIC (The Strategy Part)
         let actualDmg = p.damage;
 
-        // Shield Logic (Energy weapons shred shields)
         if (target.shield > 0) {
           if (p.type === "ENERGY") {
-            target.shield = Math.max(0, target.shield - 5); // Rapid fire strips shield fast
-            actualDmg = p.damage; // Full damage to HP even if shielded? No, absorb.
+            target.shield = Math.max(0, target.shield - 5);
+            actualDmg = p.damage;
           } else {
-            target.shield -= 1; // Kinetic/Explosive barely scratches shield
-            actualDmg = 0; // Shield absorbed it
+            target.shield -= 1;
+            actualDmg = 0;
           }
         }
 
-        // Armor Logic (Explosive weapons ignore armor)
         if (actualDmg > 0 && target.armor > 0) {
           if (p.type === "EXPLOSIVE") {
-            // Sniper ignores armor
           } else if (p.type === "ENERGY") {
-            actualDmg = Math.max(1, actualDmg - target.armor); // Armor resists energy
+            actualDmg = Math.max(1, actualDmg - target.armor);
           } else {
-            actualDmg = Math.max(1, actualDmg - target.armor / 2); // Kinetic does okay
+            actualDmg = Math.max(1, actualDmg - target.armor / 2);
           }
         }
 
@@ -445,9 +420,8 @@ export default function GridlockDefense() {
     const start = g[startNode.current.y][startNode.current.x];
     const end = g[endNode.current.y][endNode.current.x];
 
-    // Air units ignore walls
     const path = getPath(g, start, end, type === "AIR");
-    if (path.length === 0 && type !== "AIR") return; // Should not happen if build logic is safe
+    if (path.length === 0 && type !== "AIR") return;
 
     let stats = {
       hp: 50,
@@ -481,7 +455,7 @@ export default function GridlockDefense() {
           maxShield: 0,
           armor: 20,
           color: "#a855f7",
-        }; // 20 Armor blocks basic turrets
+        };
         break;
       case "AIR":
         stats = {
@@ -494,7 +468,7 @@ export default function GridlockDefense() {
           color: "#fff",
         };
         break;
-      default: // BASIC
+      default:
         stats = {
           hp: 60 * scaling,
           maxHp: 60 * scaling,
@@ -524,7 +498,6 @@ export default function GridlockDefense() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw Grid
     const g = grid.current;
     for (let y = 0; y < GRID_H; y++) {
       for (let x = 0; x < GRID_W; x++) {
@@ -539,7 +512,7 @@ export default function GridlockDefense() {
         if (cell.type === "WALL") {
           ctx.fillStyle = "#334155";
           ctx.fillRect(px + 1, py + 1, CELL_SIZE - 2, CELL_SIZE - 2);
-          // 3D effect
+
           ctx.fillStyle = "#1e293b";
           ctx.fillRect(px + 4, py + 4, CELL_SIZE - 8, CELL_SIZE - 8);
         } else if (cell.type.includes("TOWER")) {
@@ -563,7 +536,6 @@ export default function GridlockDefense() {
       }
     }
 
-    // Draw Path Hints
     if (cachedPath.current.length > 0) {
       ctx.strokeStyle = "rgba(6, 182, 212, 0.1)";
       ctx.lineWidth = 4;
@@ -585,9 +557,7 @@ export default function GridlockDefense() {
       }
     }
 
-    // Draw Enemies
     enemies.current.forEach((e) => {
-      // Body
       ctx.fillStyle = e.color;
       ctx.beginPath();
       if (e.type === "TANK") ctx.rect(e.x - 10, e.y - 10, 20, 20);
@@ -598,7 +568,6 @@ export default function GridlockDefense() {
       } else ctx.arc(e.x, e.y, e.type === "SWARM" ? 6 : 9, 0, Math.PI * 2);
       ctx.fill();
 
-      // Shield Indicator
       if (e.shield > 0) {
         ctx.strokeStyle = "#38bdf8";
         ctx.lineWidth = 2;
@@ -607,7 +576,6 @@ export default function GridlockDefense() {
         ctx.stroke();
       }
 
-      // HP Bar
       const hpPercent = e.hp / e.maxHp;
       ctx.fillStyle = "red";
       ctx.fillRect(e.x - 10, e.y - 16, 20, 4);
@@ -639,7 +607,6 @@ export default function GridlockDefense() {
     if (x < 0 || x >= GRID_W || y < 0 || y >= GRID_H) return;
     const cell = grid.current[y][x];
 
-    // Sell / Remove
     if (cell.type === "WALL" || cell.type.includes("TOWER")) {
       if (cell.type.includes("TOWER"))
         towers.current = towers.current.filter((t) => t.x !== x || t.y !== y);
@@ -652,7 +619,6 @@ export default function GridlockDefense() {
 
     if (cell.type !== "EMPTY") return;
 
-    // Build
     let cost = selectedTool === "WALL" ? 5 : TOWERS[selectedTool].cost;
     if (money >= cost) {
       const originalType = cell.type;
@@ -696,10 +662,9 @@ export default function GridlockDefense() {
     const end = g[endNode.current.y][endNode.current.x];
 
     enemies.current.forEach((e) => {
-      // Calculate path from enemy's CURRENT grid position
       const currentGridNode =
         g[Math.floor(e.y / CELL_SIZE)][Math.floor(e.x / CELL_SIZE)];
-      // Air units ignore walls, others respect them
+
       const newPath = getPath(g, currentGridNode, end, e.type === "AIR");
 
       if (newPath.length > 0) {
@@ -724,7 +689,6 @@ export default function GridlockDefense() {
 
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-4xl mx-auto p-4 bg-gray-900 rounded-2xl shadow-2xl border border-white/10">
-      {/* INFO BAR */}
       <div className="flex flex-col w-full px-4 gap-2">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
@@ -741,7 +705,6 @@ export default function GridlockDefense() {
         </div>
       </div>
 
-      {/* GAME AREA */}
       <div className="relative border-4 border-gray-800 rounded-xl overflow-hidden bg-[#0a0a0a] group shadow-[0_0_30px_rgba(0,0,0,0.5)]">
         <canvas
           ref={canvasRef}
@@ -775,7 +738,7 @@ export default function GridlockDefense() {
         )}
       </div>
 
-      {/* TOOLBAR */}
+      
       <div className="flex flex-wrap items-center justify-center gap-4 w-full bg-gray-800/80 backdrop-blur p-4 rounded-xl border border-white/5">
         <button
           onClick={togglePlay}

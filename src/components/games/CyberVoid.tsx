@@ -11,14 +11,10 @@ import { Text, PerspectiveCamera, Stars } from "@react-three/drei";
 import * as THREE from "three";
 import { Vector2, Vector3 } from "three";
 
-// --- CONFIG ---
-const ENEMY_BASE_SPEED = 4.0; // Units per second
-const SPAWN_RATE = 1.5; // Seconds between spawns (approx)
+const ENEMY_BASE_SPEED = 4.0;
+const SPAWN_RATE = 1.5;
 
-// --- TYPES ---
 type Entity = { id: number; position: Vector3; direction?: Vector3 };
-
-// --- COMPONENTS ---
 
 const PlayerCore = ({ mousePos }: { mousePos: Vector3 }) => {
   const meshRef = useRef<THREE.Group>(null);
@@ -111,7 +107,6 @@ const Explosion = ({ position }: { position: Vector3 }) => {
         const mesh = child as THREE.Mesh;
         const material = mesh.material as THREE.Material;
 
-        // Move using Delta Time
         child.position.add(particles[i].velocity.clone().multiplyScalar(delta));
         child.scale.multiplyScalar(Math.max(0, 1 - delta * 2));
 
@@ -133,7 +128,6 @@ const Explosion = ({ position }: { position: Vector3 }) => {
   );
 };
 
-// --- GAME LOGIC ---
 const GameScene = ({
   onGameOver,
   setScore,
@@ -154,20 +148,18 @@ const GameScene = ({
   const dummyVec = new Vector3();
 
   useFrame((state, delta) => {
-    // 1. Mouse Position
     dummyVec.set(
       (mouse.x * viewport.width) / 2,
       (mouse.y * viewport.height) / 2,
       0
     );
 
-    // 2. Shooting (Auto-fire)
     const now = state.clock.getElapsedTime();
     if (now - lastShot.current > 0.15) {
       const direction = new Vector3()
         .copy(dummyVec)
         .normalize()
-        .multiplyScalar(20); // Speed 20 units/sec
+        .multiplyScalar(20);
       setBullets((prev) => [
         ...prev,
         { id: Date.now(), position: new Vector3(0, 0, 0), direction },
@@ -175,13 +167,12 @@ const GameScene = ({
       lastShot.current = now;
     }
 
-    // 3. Spawning Enemies (Time based, not frame based)
     if (
       now - lastSpawn.current >
       Math.max(0.5, SPAWN_RATE - scoreRef.current * 0.001)
     ) {
       const angle = Math.random() * Math.PI * 2;
-      const radius = 20; // Spawn further out
+      const radius = 20;
       const x = Math.cos(angle) * radius;
       const y = Math.sin(angle) * radius;
       setEnemies((prev) => [
@@ -191,7 +182,6 @@ const GameScene = ({
       lastSpawn.current = now;
     }
 
-    // 4. Update Bullets (Delta Time)
     setBullets((prev) =>
       prev
         .map((b) => {
@@ -202,23 +192,19 @@ const GameScene = ({
         .filter((b) => b.position.length() < 25)
     );
 
-    // 5. Update Enemies & Collisions (Delta Time)
     setEnemies((prev) => {
       const nextEnemies: Entity[] = [];
       prev.forEach((enemy) => {
-        // Move towards center
         const dir = new Vector3(0, 0, 0)
           .sub(enemy.position)
           .normalize()
           .multiplyScalar(ENEMY_BASE_SPEED * delta);
         enemy.position.add(dir);
 
-        // Collision: Player
         if (enemy.position.length() < 1.2) {
           onGameOver();
         }
 
-        // Collision: Bullet
         const hitIndex = bullets.findIndex(
           (b) => b.position.distanceTo(enemy.position) < 1.0
         );
@@ -229,8 +215,6 @@ const GameScene = ({
           ]);
           scoreRef.current += 100;
           setScore(scoreRef.current);
-          // Note: We don't remove the bullet here to keep logic simple,
-          // but visually it looks fine as a "piercing" shot or just rapid fire.
         } else {
           nextEnemies.push(enemy);
         }
@@ -238,7 +222,6 @@ const GameScene = ({
       return nextEnemies;
     });
 
-    // Cleanup Explosions
     if (explosions.length > 5) setExplosions((prev) => prev.slice(1));
   });
 
@@ -260,7 +243,7 @@ export default function CyberVoid() {
   const [gameOver, setGameOver] = useState(false);
 
   const restart = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent click from firing in game
+    e.stopPropagation();
     setScore(0);
     setGameOver(false);
     setIsPlaying(true);

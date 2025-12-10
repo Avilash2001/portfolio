@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Play, RotateCcw, Trophy, MousePointer2 } from "lucide-react";
 import { motion } from "framer-motion";
 
-// --- TYPES ---
 interface Point {
   x: number;
   y: number;
@@ -67,7 +66,7 @@ class Bullet {
   }
   draw(ctx: CanvasRenderingContext2D) {
     ctx.shadowBlur = 10;
-    ctx.shadowColor = "#06b6d4"; // Cyan glow
+    ctx.shadowColor = "#06b6d4";
     ctx.fillStyle = "#ffffff";
     ctx.beginPath();
     ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
@@ -84,7 +83,6 @@ class Enemy {
   hp: number;
   color: string;
   constructor(w: number, h: number, difficulty: number) {
-    // Spawn at edge
     if (Math.random() < 0.5) {
       this.x = Math.random() < 0.5 ? -20 : w + 20;
       this.y = Math.random() * h;
@@ -95,7 +93,7 @@ class Enemy {
     this.size = 15 + Math.random() * 10;
     this.speed = (1 + Math.random()) * (1 + difficulty * 0.1);
     this.hp = Math.ceil(this.size / 10);
-    this.color = Math.random() > 0.8 ? "#d946ef" : "#ef4444"; // Purple or Red
+    this.color = Math.random() > 0.8 ? "#d946ef" : "#ef4444";
   }
   update(playerPos: Point) {
     const angle = Math.atan2(playerPos.y - this.y, playerPos.x - this.x);
@@ -113,7 +111,6 @@ class Enemy {
       this.y + this.size * Math.sin(0)
     );
     for (let i = 1; i <= 5; i++) {
-      // Pentagon shape
       ctx.lineTo(
         this.x + this.size * Math.cos((i * 2 * Math.PI) / 5),
         this.y + this.size * Math.sin((i * 2 * Math.PI) / 5)
@@ -125,7 +122,6 @@ class Enemy {
   }
 }
 
-// --- MAIN COMPONENT ---
 export default function NebulaRaiders() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -133,7 +129,6 @@ export default function NebulaRaiders() {
   const [gameOver, setGameOver] = useState(false);
   const [highScore, setHighScore] = useState(0);
 
-  // Game State Refs (To avoid React re-renders in game loop)
   const mouse = useRef<Point>({ x: 0, y: 0 });
   const player = useRef({ x: 0, y: 0, angle: 0 });
   const bullets = useRef<Bullet[]>([]);
@@ -142,10 +137,9 @@ export default function NebulaRaiders() {
   const frameId = useRef<number>(0);
   const lastShot = useRef(0);
   const difficulty = useRef(1);
-  const scoreRef = useRef(0); // Sync ref for loop
+  const scoreRef = useRef(0);
   const shake = useRef(0);
 
-  // Load high score
   useEffect(() => {
     const saved = localStorage.getItem("nebula-highscore");
     if (saved) setHighScore(parseInt(saved));
@@ -185,7 +179,6 @@ export default function NebulaRaiders() {
     }
   };
 
-  // --- GAME LOOP ---
   useEffect(() => {
     if (!isPlaying) return;
     const canvas = canvasRef.current;
@@ -193,13 +186,11 @@ export default function NebulaRaiders() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Responsive Canvas
     canvas.width = canvas.parentElement?.clientWidth || 800;
     canvas.height = 500;
 
     const loop = () => {
-      // 1. Clear & Shake
-      ctx.fillStyle = "rgba(0, 0, 0, 0.3)"; // Trails effect
+      ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       let shakeX = 0,
@@ -213,12 +204,10 @@ export default function NebulaRaiders() {
       ctx.save();
       ctx.translate(shakeX, shakeY);
 
-      // 2. Player Logic
       const dx = mouse.current.x - player.current.x;
       const dy = mouse.current.y - player.current.y;
       player.current.angle = Math.atan2(dy, dx);
 
-      // Draw Player
       ctx.save();
       ctx.translate(player.current.x, player.current.y);
       ctx.rotate(player.current.angle);
@@ -227,7 +216,7 @@ export default function NebulaRaiders() {
       ctx.strokeStyle = "#ffffff";
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(15, 0); // Nose
+      ctx.moveTo(15, 0);
       ctx.lineTo(-10, 10);
       ctx.lineTo(-5, 0);
       ctx.lineTo(-10, -10);
@@ -235,18 +224,14 @@ export default function NebulaRaiders() {
       ctx.stroke();
       ctx.restore();
 
-      // 3. Shooting (Auto Fire)
       const now = Date.now();
       if (now - lastShot.current > 10) {
-      // if (now - lastShot.current > 150) {
-        // Fire rate
         bullets.current.push(
           new Bullet(player.current.x, player.current.y, player.current.angle)
         );
         lastShot.current = now;
       }
 
-      // 4. Update Bullets
       bullets.current.forEach((b, i) => {
         b.update();
         b.draw(ctx);
@@ -255,19 +240,16 @@ export default function NebulaRaiders() {
         }
       });
 
-      // 5. Enemies Spawning
       if (Math.random() < 0.015 * difficulty.current) {
         enemies.current.push(
           new Enemy(canvas.width, canvas.height, difficulty.current)
         );
       }
 
-      // 6. Update Enemies & Collision
       enemies.current.forEach((enemy, i) => {
         enemy.update(player.current);
         enemy.draw(ctx);
 
-        // Collision: Enemy vs Player
         const distToPlayer = Math.hypot(
           player.current.x - enemy.x,
           player.current.y - enemy.y
@@ -284,12 +266,11 @@ export default function NebulaRaiders() {
           }
         }
 
-        // Collision: Enemy vs Bullet
         bullets.current.forEach((bullet, bIndex) => {
           const dist = Math.hypot(bullet.x - enemy.x, bullet.y - enemy.y);
           if (dist < enemy.size) {
             enemy.hp = enemy.hp - 100;
-            // enemy.hp--;
+
             bullets.current.splice(bIndex, 1);
             spawnParticles(enemy.x, enemy.y, enemy.color, 3);
 
@@ -299,21 +280,20 @@ export default function NebulaRaiders() {
               shake.current = 5;
               scoreRef.current += 100;
               setScore(scoreRef.current);
-              // Ramp difficulty
+
               difficulty.current += 0.05;
             }
           }
         });
       });
 
-      // 7. Particles
       particles.current.forEach((p, i) => {
         p.update();
         p.draw(ctx);
         if (p.life <= 0) particles.current.splice(i, 1);
       });
 
-      ctx.restore(); // Restore from shake
+      ctx.restore();
       frameId.current = requestAnimationFrame(loop);
     };
 
@@ -323,17 +303,14 @@ export default function NebulaRaiders() {
 
   return (
     <div className="relative w-full max-w-4xl h-[500px] bg-black rounded-3xl overflow-hidden border-2 border-white/10 shadow-[0_0_50px_rgba(6,182,212,0.15)] mx-auto group cursor-crosshair">
-      {/* Background Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
 
-      {/* The Game Canvas */}
       <canvas
         ref={canvasRef}
         onMouseMove={handleMouseMove}
         className="block w-full h-full relative z-10"
       />
 
-      {/* HUD */}
       <div className="absolute top-4 left-6 z-20 pointer-events-none flex gap-6 text-xl font-bold font-mono">
         <div className="text-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]">
           SCORE: {score.toString().padStart(6, "0")}
@@ -343,7 +320,6 @@ export default function NebulaRaiders() {
         </div>
       </div>
 
-      {/* Start / Game Over Screen Overlay */}
       {(!isPlaying || gameOver) && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm">
           <motion.div

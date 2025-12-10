@@ -4,15 +4,13 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Play, RotateCcw, Zap, Shield, Crosshair, Hexagon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// --- ENGINE CONFIGURATION ---
 const FPS = 60;
 const TIME_STEP = 1000 / FPS;
-const ENEMY_SPAWN_RATE_INITIAL = 60; // Frames between spawns
+const ENEMY_SPAWN_RATE_INITIAL = 60;
 const PLAYER_SPEED = 4;
 const FRICTION = 0.92;
 const MAGNET_RANGE = 150;
 
-// --- TYPES ---
 type Vector = { x: number; y: number };
 type GameState = "MENU" | "PLAYING" | "PAUSED_UPGRADE" | "GAME_OVER";
 
@@ -76,7 +74,6 @@ interface FloatingText {
   color: string;
 }
 
-// --- MATH UTILS ---
 const distSq = (p1: Entity, p2: Entity) =>
   (p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2;
 const normalize = (v: Vector): Vector => {
@@ -84,9 +81,7 @@ const normalize = (v: Vector): Vector => {
   return len === 0 ? { x: 0, y: 0 } : { x: v.x / len, y: v.y / len };
 };
 
-// --- MAIN COMPONENT ---
 export default function NeonSurvivor() {
-  // UI State
   const [gameState, setGameState] = useState<GameState>("MENU");
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
@@ -96,13 +91,11 @@ export default function NeonSurvivor() {
   const [maxXp, setMaxXp] = useState(100);
   const [upgradeOptions, setUpgradeOptions] = useState<any[]>([]);
 
-  // Engine Refs (Mutable state for performance)
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number>();
   const frameCount = useRef(0);
   const keys = useRef<{ [key: string]: boolean }>({});
 
-  // Game Entities Refs
   const player = useRef<Player>({
     id: 0,
     x: 400,
@@ -132,7 +125,6 @@ export default function NeonSurvivor() {
   const texts = useRef<FloatingText[]>([]);
   const camera = useRef({ x: 0, y: 0 });
 
-  // --- INPUT HANDLING ---
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       e.preventDefault();
@@ -150,7 +142,6 @@ export default function NeonSurvivor() {
     };
   }, []);
 
-  // --- UPGRADE SYSTEM ---
   const generateUpgrades = useCallback(() => {
     const upgrades = [
       {
@@ -198,27 +189,24 @@ export default function NeonSurvivor() {
         apply: (p: Player) => (p.weapons.projectiles += 1),
       },
     ];
-    // Pick 3 random
+
     return upgrades.sort(() => 0.5 - Math.random()).slice(0, 3);
   }, []);
 
   const selectUpgrade = (upgrade: any) => {
     upgrade.apply(player.current);
-    // Sync React State for UI
+
     setMaxHp(player.current.maxHp);
     setHp(player.current.hp);
     setGameState("PLAYING");
   };
 
-  // --- SPAWN LOGIC ---
   const spawnEnemy = (canvasW: number, canvasH: number) => {
-    // Spawn outside camera view
     const angle = Math.random() * Math.PI * 2;
     const dist = Math.max(canvasW, canvasH) / 2 + 100;
     const x = player.current.x + Math.cos(angle) * dist;
     const y = player.current.y + Math.sin(angle) * dist;
 
-    // Difficulty Scaling
     const difficulty = 1 + player.current.level * 0.1;
     const rand = Math.random();
     let type: Enemy["type"] = "BASIC";
@@ -258,10 +246,8 @@ export default function NeonSurvivor() {
     });
   };
 
-  // --- GAME LOOP ---
   const loop = useCallback(() => {
     if (gameState !== "PLAYING") {
-      // Still draw if paused, but don't update
       if (gameState === "PAUSED_UPGRADE" || gameState === "GAME_OVER") {
         const ctx = canvasRef.current?.getContext("2d");
         if (ctx) draw(ctx);
@@ -276,12 +262,10 @@ export default function NeonSurvivor() {
     requestRef.current = requestAnimationFrame(loop);
   }, [gameState]);
 
-  // --- PHYSICS UPDATE ---
   const update = () => {
     const p = player.current;
     frameCount.current++;
 
-    // 1. Player Movement (Acceleration based)
     if (keys.current["ArrowUp"] || keys.current["KeyW"])
       p.vy -= p.stats.moveSpeed;
     if (keys.current["ArrowDown"] || keys.current["KeyS"])
@@ -296,19 +280,16 @@ export default function NeonSurvivor() {
     p.x += p.vx;
     p.y += p.vy;
 
-    // 2. Camera Follow
     const canvas = canvasRef.current;
     if (canvas) {
       camera.current.x = p.x - canvas.width / 2;
       camera.current.y = p.y - canvas.height / 2;
     }
 
-    // 3. Weapons (Auto-fire closest)
     if (frameCount.current - p.weapons.lastFired > p.weapons.fireRate) {
       let closest: Enemy | null = null;
       let minDst = Infinity;
 
-      // Find closest enemy
       for (const e of enemies.current) {
         const d = distSq(p, e);
         if (d < minDst) {
@@ -318,9 +299,8 @@ export default function NeonSurvivor() {
       }
 
       if (closest && minDst < 400000) {
-        // Range check
         const angle = Math.atan2(closest.y - p.y, closest.x - p.x);
-        // Multi-shot logic
+
         for (let i = 0; i < p.weapons.projectiles; i++) {
           const spread = (i - (p.weapons.projectiles - 1) / 2) * 0.2;
           bullets.current.push({
@@ -340,7 +320,6 @@ export default function NeonSurvivor() {
       }
     }
 
-    // 4. Update Bullets
     for (const b of bullets.current) {
       b.x += b.vx;
       b.y += b.vy;
@@ -348,14 +327,11 @@ export default function NeonSurvivor() {
       if (b.life <= 0) b.markedForDeletion = true;
     }
 
-    // 5. Update Enemies (Swarm Logic)
     for (const e of enemies.current) {
-      // Move towards player
       const angle = Math.atan2(p.y - e.y, p.x - e.x);
       e.x += Math.cos(angle) * e.speed;
       e.y += Math.sin(angle) * e.speed;
 
-      // Soft Collision (Separation) - Boids Lite
       for (const other of enemies.current) {
         if (e === other) continue;
         const d = distSq(e, other);
@@ -367,10 +343,8 @@ export default function NeonSurvivor() {
         }
       }
 
-      // Hit Player
       if (distSq(e, p) < (e.radius + p.radius) ** 2) {
         if (frameCount.current % 30 === 0) {
-          // i-frames
           p.hp -= 10;
           texts.current.push({
             id: Math.random(),
@@ -380,12 +354,11 @@ export default function NeonSurvivor() {
             life: 30,
             color: "red",
           });
-          setHp(Math.max(0, Math.floor(p.hp))); // Sync UI
+          setHp(Math.max(0, Math.floor(p.hp)));
           if (p.hp <= 0) setGameState("GAME_OVER");
         }
       }
 
-      // Hit by Bullet
       for (const b of bullets.current) {
         if (b.markedForDeletion) continue;
         if (distSq(e, b) < (e.radius + b.radius + 10) ** 2) {
@@ -402,7 +375,7 @@ export default function NeonSurvivor() {
 
           if (e.hp <= 0) {
             e.markedForDeletion = true;
-            // Drop Gem
+
             gems.current.push({
               id: Math.random(),
               x: e.x,
@@ -420,7 +393,6 @@ export default function NeonSurvivor() {
       }
     }
 
-    // 6. Update Gems (Magnet)
     for (const g of gems.current) {
       const d = distSq(g, p);
       if (d < MAGNET_RANGE * MAGNET_RANGE) {
@@ -429,9 +401,8 @@ export default function NeonSurvivor() {
         if (d < (p.radius + g.radius) ** 2) {
           g.markedForDeletion = true;
           p.xp += g.value;
-          setXp(Math.floor(p.xp)); // Sync UI
+          setXp(Math.floor(p.xp));
           if (p.xp >= p.maxXp) {
-            // LEVEL UP
             p.level++;
             p.xp = 0;
             p.maxXp = Math.floor(p.maxXp * 1.5);
@@ -445,7 +416,6 @@ export default function NeonSurvivor() {
       }
     }
 
-    // 7. Spawner
     if (
       frameCount.current % Math.max(10, ENEMY_SPAWN_RATE_INITIAL - p.level) ===
       0
@@ -453,7 +423,6 @@ export default function NeonSurvivor() {
       if (canvas) spawnEnemy(canvas.width, canvas.height);
     }
 
-    // 8. Cleanup
     bullets.current = bullets.current.filter((b) => !b.markedForDeletion);
     enemies.current = enemies.current.filter((e) => !e.markedForDeletion);
     gems.current = gems.current.filter((g) => !g.markedForDeletion);
@@ -464,12 +433,10 @@ export default function NeonSurvivor() {
     });
   };
 
-  // --- RENDERER ---
   const draw = (ctx: CanvasRenderingContext2D) => {
     const canvas = ctx.canvas;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw Background Grid (Simulates movement)
     const gridSize = 50;
     const offX = -camera.current.x % gridSize;
     const offY = -camera.current.y % gridSize;
@@ -488,10 +455,9 @@ export default function NeonSurvivor() {
     ctx.stroke();
 
     ctx.save();
-    // Move world relative to player (center screen)
+
     ctx.translate(-camera.current.x, -camera.current.y);
 
-    // Draw Gems
     gems.current.forEach((g) => {
       ctx.shadowBlur = 5;
       ctx.shadowColor = g.color;
@@ -501,7 +467,6 @@ export default function NeonSurvivor() {
       ctx.fill();
     });
 
-    // Draw Player
     const p = player.current;
     ctx.shadowBlur = 15;
     ctx.shadowColor = p.color;
@@ -513,7 +478,6 @@ export default function NeonSurvivor() {
     ctx.fill();
     ctx.stroke();
 
-    // Draw Bullets
     bullets.current.forEach((b) => {
       ctx.shadowBlur = 10;
       ctx.shadowColor = b.color;
@@ -523,7 +487,6 @@ export default function NeonSurvivor() {
       ctx.fill();
     });
 
-    // Draw Enemies
     enemies.current.forEach((e) => {
       ctx.shadowBlur = 10;
       ctx.shadowColor = e.color;
@@ -545,7 +508,6 @@ export default function NeonSurvivor() {
       ctx.stroke();
     });
 
-    // Draw Texts
     texts.current.forEach((t) => {
       ctx.fillStyle = t.color;
       ctx.font = "bold 14px monospace";
@@ -556,7 +518,6 @@ export default function NeonSurvivor() {
     ctx.restore();
   };
 
-  // --- LIFECYCLE ---
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -568,7 +529,6 @@ export default function NeonSurvivor() {
   }, [loop]);
 
   const restart = () => {
-    // Reset Everything
     setScore(0);
     setLevel(1);
     setHp(100);
@@ -602,17 +562,14 @@ export default function NeonSurvivor() {
 
   return (
     <div className="relative w-full h-[600px] bg-gray-900 rounded-3xl overflow-hidden border border-white/10 shadow-2xl font-mono select-none group">
-      {/* GAME CANVAS */}
       <canvas
         ref={canvasRef}
         className="block w-full h-full cursor-crosshair bg-[#050505]"
       />
 
-      {/* HUD LAYER */}
       <div className="absolute top-0 left-0 w-full p-4 pointer-events-none flex justify-between items-start">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-4">
-            {/* HP BAR */}
             <div className="w-48 h-6 bg-gray-800 rounded-full border border-white/20 overflow-hidden relative">
               <div
                 className="h-full bg-red-500 transition-all duration-300"
@@ -622,7 +579,7 @@ export default function NeonSurvivor() {
                 {Math.ceil(hp)} / {maxHp}
               </span>
             </div>
-            {/* XP BAR */}
+
             <div className="w-48 h-4 bg-gray-800 rounded-full border border-white/20 overflow-hidden relative">
               <div
                 className="h-full bg-cyan-400 transition-all duration-300"
@@ -639,7 +596,6 @@ export default function NeonSurvivor() {
         </div>
       </div>
 
-      {/* START SCREEN */}
       {gameState === "MENU" && (
         <div className="absolute inset-0 bg-black/70 backdrop-blur-sm flex flex-col items-center justify-center z-50">
           <h1 className="text-6xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 mb-4 tracking-tighter">
@@ -655,7 +611,6 @@ export default function NeonSurvivor() {
         </div>
       )}
 
-      {/* LEVEL UP MODAL */}
       {gameState === "PAUSED_UPGRADE" && (
         <div className="absolute inset-0 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center z-50">
           <h2 className="text-4xl font-bold text-yellow-400 mb-2">
@@ -686,7 +641,6 @@ export default function NeonSurvivor() {
         </div>
       )}
 
-      {/* GAME OVER */}
       {gameState === "GAME_OVER" && (
         <div className="absolute inset-0 bg-red-900/80 backdrop-blur-md flex flex-col items-center justify-center z-50">
           <h2 className="text-5xl font-bold text-white mb-2">

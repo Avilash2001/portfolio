@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import dynamic from "next/dynamic"; // 1. Import dynamic
+import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Gamepad2,
@@ -17,11 +17,11 @@ import {
   Box,
   Rocket,
   Barrel,
+  Smartphone,
+  MousePointer2,
+  Sword,
 } from "lucide-react";
 
-// --- IMPORTS ---
-
-// Simple games can be imported normally
 import TicTacToe from "@/components/games/TicTacToe";
 import MemoryMatch from "@/components/games/MemoryMatch";
 import RockPaperScissors from "@/components/games/RockPaperScissors";
@@ -34,17 +34,7 @@ import AimTrainer from "@/components/games/AimTrainer";
 import SlotMachine from "@/components/games/SlotMachine";
 import NeonSurvivor from "@/components/games/NeonSurvivor";
 import GridlockDefense from "@/components/games/GridlockDefense";
-
-// 2. HEAVY GAMES MUST BE DYNAMIC IMPORTED (Disable SSR)
-// This fixes the "reading 'S'" and "window is undefined" errors
-const CyberVoid = dynamic(() => import("@/components/games/CyberVoid"), {
-  ssr: false,
-  loading: () => (
-    <div className="h-[600px] w-full flex items-center justify-center text-cyan-500">
-      Loading 3D Engine...
-    </div>
-  ),
-});
+import SyntaxSlicer from "@/components/games/SyntaxSlicer";
 
 const NebulaRaiders = dynamic(
   () => import("@/components/games/NebulaRaiders"),
@@ -52,102 +42,181 @@ const NebulaRaiders = dynamic(
     ssr: false,
     loading: () => (
       <div className="h-[500px] w-full flex items-center justify-center text-cyan-500">
-        Loading Physics...
+        Loading Physics Engine...
       </div>
     ),
   }
 );
 
-// --- CONFIG ---
-
-const games = [
-  // { id: "cybervoid", title: "Cyber Void 3D", icon: Box, component: CyberVoid },
+const ALL_GAMES = [
   {
     id: "survivor",
     title: "Neon Survivor",
     icon: Zap,
     component: NeonSurvivor,
+    platforms: ["web"],
   },
   {
     id: "gridlock",
     title: "Gridlock Defense",
     icon: Barrel,
     component: GridlockDefense,
+    platforms: ["web"],
   },
   {
     id: "nebula",
     title: "Nebula Raiders",
     icon: Rocket,
     component: NebulaRaiders,
+    platforms: ["web"],
   },
-  { id: "snake", title: "Cyber Snake", icon: Ghost, component: SnakeGame },
+  {
+    id: "snake",
+    title: "Cyber Snake",
+    icon: Ghost,
+    component: SnakeGame,
+    platforms: ["web"],
+  },
+  {
+    id: "slicer",
+    title: "Syntax Slicer",
+    icon: Sword,
+    component: SyntaxSlicer,
+    platforms: ["mobile"],
+  },
   {
     id: "tictactoe",
     title: "Cosmic Tac Toe",
     icon: Gamepad2,
     component: TicTacToe,
+    platforms: ["web", "mobile"],
   },
   {
     id: "memory",
     title: "Memory Stack",
     icon: BrainCircuit,
     component: MemoryMatch,
+    platforms: ["web", "mobile"],
   },
   {
     id: "rps",
     title: "R.P.S. Galaxy",
     icon: Scissors,
     component: RockPaperScissors,
+    platforms: ["web", "mobile"],
   },
   {
     id: "simon",
     title: "Simon Sequence",
     icon: Lightbulb,
     component: SimonSays,
+    platforms: ["web", "mobile"],
   },
-  { id: "whack", title: "Bug Zapper", icon: Bug, component: WhackAMole },
+  {
+    id: "whack",
+    title: "Bug Zapper",
+    icon: Bug,
+    component: WhackAMole,
+    platforms: ["web", "mobile"],
+  },
   {
     id: "typing",
     title: "Speed Typer",
     icon: Keyboard,
     component: TypingSpeed,
+    platforms: ["web"],
   },
   {
     id: "reaction",
     title: "Reaction Void",
     icon: Zap,
     component: ReactionTime,
+    platforms: ["web", "mobile"],
   },
-  { id: "aim", title: "Aim Lab", icon: Crosshair, component: AimTrainer },
-  // {
-  //   id: "slots",
-  //   title: "Lucky Slots",
-  //   icon: DollarSign,
-  //   component: SlotMachine,
-  // },
+  {
+    id: "aim",
+    title: "Aim Lab",
+    icon: Crosshair,
+    component: AimTrainer,
+    platforms: ["web", "mobile"],
+  },
+  {
+    id: "slots",
+    title: "Lucky Slots",
+    icon: DollarSign,
+    component: SlotMachine,
+    platforms: ["mobile"],
+  },
 ];
 
 export default function GamesPage() {
-  const [activeGame, setActiveGame] = useState(games[0].id);
+  const [activeGame, setActiveGame] = useState<string>("");
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
-  const CurrentGameComponent = games.find(
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+
+      const current = ALL_GAMES.find((g) => g.id === activeGame);
+      if (current) {
+        const supported = mobile
+          ? current.platforms.includes("mobile")
+          : current.platforms.includes("web");
+        if (!supported) {
+          const firstValid = ALL_GAMES.find((g) =>
+            mobile
+              ? g.platforms.includes("mobile")
+              : g.platforms.includes("web")
+          );
+          if (firstValid) setActiveGame(firstValid.id);
+        }
+      } else {
+        const firstValid = ALL_GAMES.find((g) =>
+          mobile ? g.platforms.includes("mobile") : g.platforms.includes("web")
+        );
+        if (firstValid) setActiveGame(firstValid.id);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, [activeGame]);
+
+  const visibleGames = ALL_GAMES.filter((game) => {
+    if (isMobile === null) return true;
+    return isMobile
+      ? game.platforms.includes("mobile")
+      : game.platforms.includes("web");
+  });
+
+  const CurrentGameComponent = ALL_GAMES.find(
     (g) => g.id === activeGame
   )?.component;
-  const currentGameTitle = games.find((g) => g.id === activeGame)?.title;
+  const currentGameTitle = ALL_GAMES.find((g) => g.id === activeGame)?.title;
+
+  if (isMobile === null) return <div className="min-h-screen bg-black" />;
 
   return (
     <div className="flex flex-col h-full gap-8 items-center">
-      {/* Header */}
       <div className="text-center space-y-2">
-        <h1 className="text-5xl font-bold">
+        <h1 className="text-4xl sm:text-6xl font-bold">
           <span className="gradient-text">Arcade</span> Zone
         </h1>
-        <p className="text-gray-400">Select a cartridge to play</p>
+
+        <div className="flex items-center justify-center gap-2 text-gray-400 text-sm sm:text-base">
+          {isMobile ? <Smartphone size={18} /> : <MousePointer2 size={18} />}
+          <span>
+            {isMobile
+              ? "Showing games optimized for Touch Controls"
+              : "Showing full library (Keyboard & Mouse enabled)"}
+          </span>
+        </div>
       </div>
 
-      {/* Game Selector Grid */}
       <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 w-full max-w-5xl">
-        {games.map((game) => (
+        {visibleGames.map((game) => (
           <button
             key={game.id}
             onClick={() => setActiveGame(game.id)}
@@ -166,17 +235,15 @@ export default function GamesPage() {
         ))}
       </div>
 
-      {/* Game Console */}
       <div className="w-full max-w-4xl relative mt-4">
-        {/* Glow effect behind console */}
         <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-[2.5rem] opacity-20 blur-xl transition-all duration-500" />
 
         <div className="relative w-full bg-black/80 backdrop-blur-xl border border-white/10 rounded-[2rem] p-4 sm:p-8 min-h-[500px] flex flex-col shadow-2xl">
           <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
-            <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-              {games.find((g) => g.id === activeGame)?.icon &&
+            <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+              {ALL_GAMES.find((g) => g.id === activeGame)?.icon &&
                 React.createElement(
-                  games.find((g) => g.id === activeGame)!.icon,
+                  ALL_GAMES.find((g) => g.id === activeGame)!.icon,
                   { className: "text-cyan-400" }
                 )}
               {currentGameTitle}
@@ -188,7 +255,7 @@ export default function GamesPage() {
             </div>
           </div>
 
-          <div className="flex-1 flex items-center justify-center">
+          <div className="flex-1 flex items-center justify-center overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeGame}
@@ -198,7 +265,13 @@ export default function GamesPage() {
                 transition={{ duration: 0.2 }}
                 className="w-full h-full flex items-center justify-center"
               >
-                {CurrentGameComponent && <CurrentGameComponent />}
+                {CurrentGameComponent ? (
+                  <CurrentGameComponent />
+                ) : (
+                  <div className="text-cyan-500">
+                    Select a game cartridge...
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
           </div>
