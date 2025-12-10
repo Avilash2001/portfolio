@@ -20,6 +20,7 @@ import {
   Smartphone,
   MousePointer2,
   Sword,
+  Database,
 } from "lucide-react";
 
 import TicTacToe from "@/components/games/TicTacToe";
@@ -35,6 +36,7 @@ import SlotMachine from "@/components/games/SlotMachine";
 import NeonSurvivor from "@/components/games/NeonSurvivor";
 import GridlockDefense from "@/components/games/GridlockDefense";
 import SyntaxSlicer from "@/components/games/SyntaxSlicer";
+import MemoryLeak from "@/components/games/MemoryLeak";
 
 const NebulaRaiders = dynamic(
   () => import("@/components/games/NebulaRaiders"),
@@ -62,6 +64,13 @@ const ALL_GAMES = [
     icon: Barrel,
     component: GridlockDefense,
     platforms: ["web"],
+  },
+  {
+    id: "memory_leak",
+    title: "Memory Leak",
+    icon: Database,
+    component: MemoryLeak,
+    platforms: ["mobile", "web"], // It's great on both!
   },
   {
     id: "nebula",
@@ -119,13 +128,13 @@ const ALL_GAMES = [
     component: WhackAMole,
     platforms: ["web", "mobile"],
   },
-  {
-    id: "typing",
-    title: "Speed Typer",
-    icon: Keyboard,
-    component: TypingSpeed,
-    platforms: ["web"],
-  },
+  // {
+  //   id: "typing",
+  //   title: "Speed Typer",
+  //   icon: Keyboard,
+  //   component: TypingSpeed,
+  //   platforms: ["web"],
+  // },
   {
     id: "reaction",
     title: "Reaction Void",
@@ -140,13 +149,13 @@ const ALL_GAMES = [
     component: AimTrainer,
     platforms: ["web", "mobile"],
   },
-  {
-    id: "slots",
-    title: "Lucky Slots",
-    icon: DollarSign,
-    component: SlotMachine,
-    platforms: ["mobile"],
-  },
+  // {
+  //   id: "slots",
+  //   title: "Lucky Slots",
+  //   icon: DollarSign,
+  //   component: SlotMachine,
+  //   platforms: ["mobile"],
+  // },
 ];
 
 export default function GamesPage() {
@@ -206,16 +215,16 @@ export default function GamesPage() {
         </h1>
 
         <div className="flex items-center justify-center gap-2 text-gray-400 text-sm sm:text-base">
-          {isMobile ? <Smartphone size={18} /> : <MousePointer2 size={18} />}
+          {isMobile ? <Smartphone size={18} /> : <Keyboard size={18} />}
           <span>
             {isMobile
               ? "Showing games optimized for Touch Controls"
-              : "Showing full library (Keyboard & Mouse enabled)"}
+              : "Showing games optimized for Keyboard & Mouse"}
           </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 w-full max-w-5xl">
+      <div className="grid grid-cols-3 lg:grid-cols-6 gap-3 w-full max-w-5xl">
         {visibleGames.map((game) => (
           <button
             key={game.id}
