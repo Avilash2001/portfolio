@@ -4,6 +4,8 @@ import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Close } from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
 
 interface Project {
   id: string;
@@ -213,6 +215,7 @@ const ProjectsPage = () => {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -40 }}
+                transition={{ type: "spring", stiffness: 80, damping: 16 }}
                 className="relative w-[700px] h-[700px] flex items-center justify-center scale-[0.6] sm:scale-[0.8] md:scale-100 transition-transform duration-500"
               >
                 <div className="relative z-20">
@@ -343,7 +346,7 @@ const ProjectsPage = () => {
                   transition={{ type: "spring", stiffness: 90, damping: 16 }}
                   className="w-full max-w-3xl"
                 >
-                  <div className="rounded-3xl border border-white/10 bg-black/70 backdrop-blur-xl p-6 md:p-8 shadow-2xl">
+                  <div className="relative rounded-3xl border border-white/10 bg-black/70 backdrop-blur-xl p-6 md:p-8 shadow-2xl">
                     <div className="flex items-center gap-4 mb-4">
                       <div
                         className="w-14 h-14 rounded-2xl flex items-center justify-center"
@@ -361,9 +364,9 @@ const ProjectsPage = () => {
                         <h2 className="text-2xl font-semibold text-white">
                           {selectedProject.name}
                         </h2>
-                        <p className="text-[11px] uppercase tracking-[0.18em] text-gray-400">
+                        {/* <p className="text-[11px] uppercase tracking-[0.18em] text-gray-400">
                           Selected Project
-                        </p>
+                        </p> */}
                       </div>
                     </div>
 
@@ -379,12 +382,19 @@ const ProjectsPage = () => {
                       </li>
                     </ul>
 
-                    <button
+                    {/* <button
                       className="mt-6 text-xs text-gray-400 hover:text-white underline underline-offset-4"
                       onClick={() => setSelectedProject(null)}
                     >
                       Back to orbit view
-                    </button>
+                    </button> */}
+
+                    <div
+                      className="absolute top-8 right-8 cursor-pointer"
+                      onClick={() => setSelectedProject(null)}
+                    >
+                      <X />
+                    </div>
                   </div>
                 </motion.div>
               </motion.div>
