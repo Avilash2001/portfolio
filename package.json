@@ -10,6 +10,10 @@
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
+    "@react-three/drei": "9.102.0",
+    "@react-three/fiber": "8.16.8",
+    "@react-three/postprocessing": "2.16.2",
+    "@types/three": "0.160.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.12",
@@ -19,6 +23,7 @@
     "react-dom": "^18",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
+    "three": "0.160.0",
     "vaul": "^1.1.2"
   },
   "devDependencies": {
