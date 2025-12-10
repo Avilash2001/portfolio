@@ -12,7 +12,6 @@ interface Star {
 
 const StarBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  // Track mouse position with a ref to avoid re-renders
   const mouseRef = useRef({ x: 0, y: 0, isActive: false });
 
   useEffect(() => {
@@ -25,7 +24,6 @@ const StarBackground = () => {
     let width = window.innerWidth;
     let height = window.innerHeight;
 
-    // Configuration
     const baseStarCount = 10000;
     let depthMultiplier = 1;
     let baseSpeed = 0.5;
@@ -35,14 +33,12 @@ const StarBackground = () => {
     canvas.width = width;
     canvas.height = height;
 
-    // Helper: Track Mouse
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current.x = e.clientX;
       mouseRef.current.y = e.clientY;
       mouseRef.current.isActive = true;
     };
 
-    // Helper: Reset interaction when mouse leaves window
     const handleMouseLeave = () => {
       mouseRef.current.isActive = false;
     };
@@ -112,23 +108,19 @@ const StarBackground = () => {
           star.y = Math.random() * height - height / 2;
         }
 
-        // 1. Calculate Standard Position
         let x = cx + (star.x / star.z) * width;
         let y = cy + (star.y / star.z) * width;
 
-        // 2. Interaction: Deflect if near mouse
-        // We only calculate this if the mouse is on screen
         if (mouseRef.current.isActive) {
           const dx = x - mouseRef.current.x;
           const dy = y - mouseRef.current.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          const radius = 150; // The "Force Field" radius
+          const radius = 150;
 
           if (dist < radius) {
-            const force = (radius - dist) / radius; // Stronger force when closer
+            const force = (radius - dist) / radius;
             const angle = Math.atan2(dy, dx);
 
-            // Push the star away based on angle
             const pushStrength = 50;
             x += Math.cos(angle) * force * pushStrength;
             y += Math.sin(angle) * force * pushStrength;
@@ -139,7 +131,6 @@ const StarBackground = () => {
         const rawSize = (1 - star.z / (width * depthMultiplier)) * sizeFactor;
         const size = Math.max(0.35, rawSize);
 
-        // Optimization: Use pre-calculated RGB if possible, but keeping your logic for now
         ctx.fillStyle = hexToRgba(
           star.color,
           Math.max(0.1, 1 - star.z / (width * depthMultiplier))

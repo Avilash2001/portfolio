@@ -23,21 +23,18 @@ const StarBackgroundDeflect = () => {
     let width = window.innerWidth;
     let height = window.innerHeight;
 
-    // Mouse state (screen coords)
     const mouse = {
       x: 0,
       y: 0,
       active: false,
     };
 
-    // Base configuration
-    const baseStarCount = 10000; // desktop default
-    let depthMultiplier = 1; // increased on mobile to push stars further back
+    const baseStarCount = 5000;
+    let depthMultiplier = 1;
     let baseSpeed = 0.5;
     let stars: Star[] = [];
     const colors = ["#FF0099", "#00FFFF", "#FF9900", "#FFFFFF", "#333333"];
 
-    // Initialize Canvas
     canvas.width = width;
     canvas.height = height;
 
@@ -75,7 +72,7 @@ const StarBackgroundDeflect = () => {
         stars.push({
           x: Math.random() * width - width / 2,
           y: Math.random() * height - height / 2,
-          z: Math.random() * width * depthMultiplier, // depth scaled by multiplier
+          z: Math.random() * width * depthMultiplier,
           pz: Math.random() * width * depthMultiplier,
           color: colors[Math.floor(Math.random() * colors.length)],
         });
@@ -93,7 +90,6 @@ const StarBackgroundDeflect = () => {
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      // ignore on small screens
       if (window.innerWidth < 768) return;
       mouse.x = e.clientX;
       mouse.y = e.clientY;
@@ -118,14 +114,12 @@ const StarBackgroundDeflect = () => {
       const cy = height / 2;
       const isMobile = width < 768;
 
-      const influenceRadius = isMobile ? 0 : 140; // px around mouse
-      const maxPush = 14; // strength of repulsion
+      const influenceRadius = isMobile ? 0 : 140;
+      const maxPush = 14;
 
       stars.forEach((star) => {
-        // Move star closer
         star.z -= baseSpeed;
 
-        // Reset star if it passes the screen
         if (star.z <= 0) {
           star.z = width * depthMultiplier;
           star.pz = star.z;
@@ -133,34 +127,29 @@ const StarBackgroundDeflect = () => {
           star.y = Math.random() * height - height / 2;
         }
 
-        // Project 3D -> 2D (initial)
         let x = cx + (star.x / star.z) * width;
         let y = cy + (star.y / star.z) * width;
 
-        // Mouse force field (repel nearby stars)
         if (mouse.active && !isMobile && influenceRadius > 0) {
           const dx = x - mouse.x;
           const dy = y - mouse.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
           if (dist < influenceRadius && dist > 0.1) {
-            const force = (influenceRadius - dist) / influenceRadius; // 0–1
+            const force = (influenceRadius - dist) / influenceRadius;
             const push = force * maxPush;
 
             const nx = dx / dist;
             const ny = dy / dist;
 
-            // Push original 3D coords slightly away
             star.x += nx * push;
             star.y += ny * push;
 
-            // Re-project after deflection
             x = cx + (star.x / star.z) * width;
             y = cy + (star.y / star.z) * width;
           }
         }
 
-        // Size scales with depthMultiplier and smaller on mobile
         const sizeFactor = isMobile ? 1.5 : 2.5;
         const rawSize = (1 - star.z / (width * depthMultiplier)) * sizeFactor;
         const size = Math.max(0.35, rawSize);

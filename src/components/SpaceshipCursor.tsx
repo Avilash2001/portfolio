@@ -4,18 +4,15 @@ import React, { useEffect, useRef, useState } from "react";
 const SpaceshipCursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
 
-  // We use refs for position to keep the animation loop performant
-  // without triggering React re-renders for every pixel moved
   const pos = useRef({ x: 0, y: 0 });
   const prevPos = useRef({ x: 0, y: 0 });
   const angle = useRef(0);
 
-  // Only show cursor after user interacts
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    if (isTouch) return; // Don't run on mobile
+    if (isTouch) return;
 
     const moveCursor = (e: MouseEvent) => {
       if (!isVisible) setIsVisible(true);
@@ -24,21 +21,16 @@ const SpaceshipCursor = () => {
 
     window.addEventListener("mousemove", moveCursor);
 
-    // Animation Loop
     let rafId: number;
     const animate = () => {
       if (cursorRef.current) {
         const dx = pos.current.x - prevPos.current.x;
         const dy = pos.current.y - prevPos.current.y;
 
-        // Calculate rotation only if moving significantly
         if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
-          // Add 90deg (PI/2) because standard 0deg is right, but our ship points up
           angle.current = Math.atan2(dy, dx) + Math.PI / 2;
         }
 
-        // Smooth follow logic (optional, remove lerp for instant follow)
-        // For instant "hard" follow like a hardware cursor:
         const x = pos.current.x;
         const y = pos.current.y;
 
@@ -63,16 +55,11 @@ const SpaceshipCursor = () => {
     <div
       ref={cursorRef}
       className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
-      style={
-        {
-          // transform: "translate3d(-100px, -100px, 0)", // Start off-screen
-          // willChange: "transform",
-        }
-      }
+      style={{
+        transform: "translate3d(-100px, -100px, 0)",
+        willChange: "transform",
+      }}
     >
-      {/* Spaceship SVG */}
-      {/* Centered (-12px) so the tip is exactly on the mouse point */}
-      {/* <div className="-translate-x-1/2 -translate-y-1/2"> */}
       <div>
         <svg
           width="24"

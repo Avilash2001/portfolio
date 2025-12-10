@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import SideBar from "@/components/SideBar";
 import Transition from "@/components/Transition";
 import StarBackgroundDeflect from "@/components/StarBackgroundDeflect";
-import SpaceshipCursor from "@/components/SpaceshipCursor"; // Import
+import SpaceshipCursor from "@/components/SpaceshipCursor"; 
 import StarBackgroundDistort from "@/components/StarBackgroundDistort";
 
 const font = Darker_Grotesque({ subsets: ["latin"] });

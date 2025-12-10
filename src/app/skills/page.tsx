@@ -27,18 +27,13 @@ const SkillsPage = () => {
 
   return (
     <div className="w-full pb-10">
-      {/* Container for Text + Slider */}
       <div className="flex flex-col items-center justify-start gap-4 xl:gap-10 mb-10">
-        {/* Static Title */}
         <p className="text-xl font-medium shrink-0">My skills as a</p>
 
-        {/* The Horizontal Carousel Container */}
         <div className="relative h-[40px] w-full max-w-[600px] flex items-center justify-center overflow-hidden">
-          {/* Left/Right Fade Masks for depth */}
           <div className="absolute left-0 w-[50px] h-full bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 w-[50px] h-full bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
 
-          {/* Left Arrow */}
           <div
             className="absolute left-2 z-20 cursor-pointer hover:scale-110 transition-transform opacity-50 hover:opacity-100"
             onClick={() => changeJob("left")}
@@ -46,7 +41,6 @@ const SkillsPage = () => {
             <ChevronLeft color="white" size={30} />
           </div>
 
-          {/* The Sliding Items */}
           <div className="relative w-full h-full flex justify-center items-center">
             {JOBS.map((job, index) => {
               let offset = index - currentIndex;
@@ -91,7 +85,6 @@ const SkillsPage = () => {
             })}
           </div>
 
-          {/* Right Arrow */}
           <div
             className="absolute right-2 z-20 cursor-pointer hover:scale-110 transition-transform opacity-50 hover:opacity-100"
             onClick={() => changeJob("right")}
@@ -101,7 +94,6 @@ const SkillsPage = () => {
         </div>
       </div>
 
-      {/* Grid of Skills */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[40px] mt-[20px]">
         {skillList[selectedJob].map((skill, index) => (
           <Transition

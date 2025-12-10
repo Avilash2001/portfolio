@@ -197,7 +197,6 @@ const ProjectsPage = () => {
         <span className="gradient-text font-semibold">marketed</span> in
       </p>
 
-      {/* DESKTOP */}
       <div className="hidden md:flex w-full justify-center overflow-hidden font-sans relative">
         <motion.div
           className={cn(
@@ -207,7 +206,6 @@ const ProjectsPage = () => {
           layout
         >
           <AnimatePresence mode="wait">
-            {/* ORBIT VIEW */}
             {!selectedProject && (
               <motion.div
                 key="orbit-view"
@@ -279,7 +277,6 @@ const ProjectsPage = () => {
               </motion.div>
             )}
 
-            {/* LINE + CARD VIEW */}
             {selectedProject && (
               <motion.div
                 key="line-and-card"
@@ -290,9 +287,8 @@ const ProjectsPage = () => {
                 transition={{ type: "spring", stiffness: 80, damping: 16 }}
                 className="w-full flex flex-col items-center gap-10 pt-10"
               >
-                {/* Horizontal line of projects */}
-                <div className="relative w-full max-w-4xl">
-                  <div className="absolute left-0 right-0 top-1/2 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent pointer-events-none" />
+                <div className="relative w-full">
+                  <div className="absolute left-0 right-0 top-8 h-px bg-gradient-to-r from-gray-400/25 via-gray-800 to-gray-400/25 pointer-events-none" />
                   <div className="flex items-center justify-center gap-10 px-4 relative">
                     {ALL_PROJECTS.map((project) => {
                       const isActive = project.id === selectedProject.id;
@@ -310,7 +306,7 @@ const ProjectsPage = () => {
                             {isActive && (
                               <motion.div
                                 layoutId="project-glow"
-                                className="absolute -inset-2 rounded-full bg-gradient-to-r from-[#ffca30] via-[#ff01a2] to-[#b94ddc] blur-md opacity-90"
+                                className="absolute inset-2 rounded-full bg-gradient-to-r from-[#ffca30] via-[#ff01a2] to-[#b94ddc] blur-xl"
                               />
                             )}
                             <div className="relative w-16 h-16 rounded-full bg-black/70 border border-white/10 flex items-center justify-center shadow-lg">
@@ -325,7 +321,7 @@ const ProjectsPage = () => {
                           </div>
 
                           <p
-                            className={`text-xs text-center mt-1 ${
+                            className={`text-xs text-center mt-1 h-10 ${
                               isActive
                                 ? "text-white font-semibold"
                                 : "text-gray-400"
@@ -339,7 +335,6 @@ const ProjectsPage = () => {
                   </div>
                 </div>
 
-                {/* Project details card BELOW the line */}
                 <motion.div
                   layout
                   initial={{ opacity: 0, y: 20 }}
@@ -376,7 +371,6 @@ const ProjectsPage = () => {
                       {selectedProject.description}
                     </p>
 
-                    {/* placeholder bullets – replace with real case-study content if you want */}
                     <ul className="space-y-2 text-sm text-gray-300">
                       <li>• Role: Product design, branding & marketing</li>
                       <li>• Scope: UX/UI, landing pages, campaigns, funnels</li>
@@ -399,7 +393,6 @@ const ProjectsPage = () => {
         </motion.div>
       </div>
 
-      {/* MOBILE (unchanged) */}
       <div className="flex md:hidden flex-col items-center w-full px-4 py-8 relative z-10">
         <div className="relative mb-12">
           <motion.div
