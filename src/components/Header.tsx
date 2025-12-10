@@ -1,7 +1,14 @@
 "use client";
 import React, { useRef } from "react";
 import Image from "next/image";
-import { Cog, Contact, FolderKanban, MenuIcon, User } from "lucide-react";
+import {
+  Cog,
+  Contact,
+  FolderKanban,
+  Gamepad,
+  MenuIcon,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 
@@ -28,6 +35,11 @@ const Header = () => {
       name: "Contact Me",
       link: "/contact",
       icon: <Contact size={"20px"} />,
+    },
+    {
+      name: "Arcade",
+      link: "/arcade",
+      icon: <Gamepad size={"20px"} />,
     },
   ];
 
