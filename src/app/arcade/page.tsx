@@ -21,6 +21,7 @@ import {
   MousePointer2,
   Sword,
   Database,
+  Type,
 } from "lucide-react";
 
 import TicTacToe from "@/components/games/TicTacToe";
@@ -37,6 +38,7 @@ import NeonSurvivor from "@/components/games/NeonSurvivor";
 import GridlockDefense from "@/components/games/GridlockDefense";
 import SyntaxSlicer from "@/components/games/SyntaxSlicer";
 import MemoryLeak from "@/components/games/MemoryLeak";
+import Wordle from "@/components/games/Wordle";
 
 const NebulaRaiders = dynamic(
   () => import("@/components/games/NebulaRaiders"),
@@ -107,13 +109,13 @@ const ALL_GAMES = [
     component: MemoryMatch,
     platforms: ["web", "mobile"],
   },
-  {
-    id: "rps",
-    title: "R.P.S. Galaxy",
-    icon: Scissors,
-    component: RockPaperScissors,
-    platforms: ["web", "mobile"],
-  },
+  // {
+  //   id: "rps",
+  //   title: "R.P.S. Galaxy",
+  //   icon: Scissors,
+  //   component: RockPaperScissors,
+  //   platforms: ["mobile"],
+  // },
   {
     id: "simon",
     title: "Simon Sequence",
@@ -126,6 +128,13 @@ const ALL_GAMES = [
     title: "Bug Zapper",
     icon: Bug,
     component: WhackAMole,
+    platforms: ["web", "mobile"],
+  },
+  {
+    id: "wordle",
+    title: "Wordle",
+    icon: Type,
+    component: Wordle,
     platforms: ["web", "mobile"],
   },
   // {
