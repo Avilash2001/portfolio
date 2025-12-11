@@ -9,8 +9,6 @@ import {
   Shield,
   Ban,
   Pause,
-  Plane,
-  Skull,
 } from "lucide-react";
 
 const GRID_W = 20;
@@ -77,33 +75,33 @@ interface TowerStats {
 const TOWERS: Record<string, TowerStats> = {
   TOWER_BASIC: {
     range: 4,
-    damage: 25,
-    cooldown: 40,
-    cost: 60,
+    damage: 20,
+    cooldown: 35,
+    cost: 50,
     color: "#06b6d4",
     name: "Turret",
     type: "KINETIC",
-    desc: "Balanced. Good vs Basic.",
+    desc: "Low DPS. Cheap.",
   },
   TOWER_SNIPER: {
     range: 9,
-    damage: 150,
-    cooldown: 150,
-    cost: 150,
+    damage: 120,
+    cooldown: 140,
+    cost: 140,
     color: "#ef4444",
     name: "Sniper",
     type: "EXPLOSIVE",
-    desc: "Crushes Armor. Slow.",
+    desc: "Anti-Armor. Slow.",
   },
   TOWER_RAPID: {
     range: 3.5,
-    damage: 6,
-    cooldown: 6,
-    cost: 220,
+    damage: 5,
+    cooldown: 5,
+    cost: 200,
     color: "#eab308",
     name: "Blaster",
     type: "ENERGY",
-    desc: "Shreds Shields. Weak vs Armor.",
+    desc: "Melts Shields.",
   },
 };
 
@@ -156,7 +154,6 @@ const getPath = (
 
       if (ny >= 0 && ny < GRID_H && nx >= 0 && nx < GRID_W) {
         const neighbor = grid[ny][nx];
-
         if (closedList.has(neighbor)) continue;
         if (
           !ignoreWalls &&
@@ -188,8 +185,8 @@ const getPath = (
 };
 
 export default function GridlockDefense() {
-  const [money, setMoney] = useState(200);
-  const [lives, setLives] = useState(10);
+  const [money, setMoney] = useState(250);
+  const [lives, setLives] = useState(50);
   const [wave, setWave] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [gameOver, setGameOver] = useState(false);
@@ -201,6 +198,7 @@ export default function GridlockDefense() {
   const requestRef = useRef<number>();
   const frameCount = useRef(0);
   const isPlayingRef = useRef(false);
+  const waveRef = useRef(1);
 
   const grid = useRef<Node[][]>([]);
   const enemies = useRef<Enemy[]>([]);
@@ -247,34 +245,41 @@ export default function GridlockDefense() {
       enemies.current.length === 0 &&
       waveState.current.enemiesSpawned >= waveState.current.enemiesToSpawn
     ) {
-      setupWave(wave);
+      setupWave(waveRef.current);
     }
     setIsPlaying(!isPlaying);
     isPlayingRef.current = !isPlaying;
   };
 
   const setupWave = (w: number) => {
-    let count = 5 + Math.floor(w * 1.5);
+    // let count = Math.floor(6 + Math.pow(w, 1.4) + w);
+    let count = Math.floor(6 + Math.pow(w, 2) + w);
     let type: EnemyType = "BASIC";
-    let spawnRate = 60;
+    let spawnRate = Math.max(10, 60 - w * 3);
 
     if (w % 5 === 0) {
       type = "TANK";
-      count = 3 + Math.floor(w / 5);
-      spawnRate = 120;
-      setNextWaveInfo(`Wave ${w}: HEAVY ARMOR (Need Snipers)`);
+      count = Math.floor(3 + w / 2);
+      spawnRate = 80;
+      setNextWaveInfo(
+        `Wave ${w}: HEAVY ARMOR (Need Snipers) (Enemy Count: ${count})`
+      );
     } else if (w % 3 === 0) {
       type = "AIR";
-      count = 5 + w;
-      spawnRate = 50;
-      setNextWaveInfo(`Wave ${w}: AIR RAID (Ignore Walls!)`);
+      count = Math.floor(8 + w * 1.5);
+      spawnRate = 40;
+      setNextWaveInfo(
+        `Wave ${w}: AIR RAID (Ignore Walls!) (Enemy Count: ${count})`
+      );
     } else if (w % 2 === 0) {
       type = "SWARM";
-      count = 10 + w * 2;
-      spawnRate = 25;
-      setNextWaveInfo(`Wave ${w}: SWARM (Need Rapid Fire)`);
+      count = Math.floor(15 + w * 3);
+      spawnRate = 20;
+      setNextWaveInfo(
+        `Wave ${w}: SWARM (Need Rapid Fire) (Enemy Count: ${count})`
+      );
     } else {
-      setNextWaveInfo(`Wave ${w}: Basic Infantry`);
+      setNextWaveInfo(`Wave ${w}: Infantry Squad (Enemy Count: ${count})`);
     }
 
     waveState.current = {
@@ -293,7 +298,6 @@ export default function GridlockDefense() {
 
   const update = () => {
     frameCount.current++;
-    const g = grid.current;
 
     if (waveState.current.enemiesSpawned < waveState.current.enemiesToSpawn) {
       if (frameCount.current % waveState.current.spawnCooldown === 0) {
@@ -303,9 +307,12 @@ export default function GridlockDefense() {
     } else if (enemies.current.length === 0) {
       setIsPlaying(false);
       isPlayingRef.current = false;
-      setWave((w) => w + 1);
-      setMoney((m) => m + 50 + wave * 10);
-      setupWave(wave + 1);
+
+      const nextWave = waveRef.current + 1;
+      waveRef.current = nextWave;
+      setWave(nextWave);
+      setMoney((m) => m + 50 + nextWave * 5);
+      setupWave(nextWave);
       return;
     }
 
@@ -422,6 +429,10 @@ export default function GridlockDefense() {
 
     const path = getPath(g, start, end, type === "AIR");
     if (path.length === 0 && type !== "AIR") return;
+    const currentWave = waveRef.current;
+    const hpScaling = 1 + currentWave * 0.35;
+    // const speedScaling = Math.min(3.0, 1 + currentWave * 0.05);
+    const speedScaling = Math.min(3.0, 1 + currentWave * 0.3);
 
     let stats = {
       hp: 50,
@@ -432,14 +443,13 @@ export default function GridlockDefense() {
       armor: 0,
       color: "#fff",
     };
-    const scaling = 1 + wave * 0.2;
 
     switch (type) {
       case "SWARM":
         stats = {
-          hp: 20 * scaling,
-          maxHp: 20 * scaling,
-          speed: 2.5,
+          hp: 20 * hpScaling,
+          maxHp: 20 * hpScaling,
+          speed: 2.5 * speedScaling,
           shield: 2,
           maxShield: 2,
           armor: 0,
@@ -448,20 +458,20 @@ export default function GridlockDefense() {
         break;
       case "TANK":
         stats = {
-          hp: 300 * scaling,
-          maxHp: 300 * scaling,
-          speed: 0.8,
+          hp: 300 * hpScaling,
+          maxHp: 300 * hpScaling,
+          speed: 0.8 * speedScaling,
           shield: 0,
           maxShield: 0,
-          armor: 20,
+          armor: 25,
           color: "#a855f7",
         };
         break;
       case "AIR":
         stats = {
-          hp: 60 * scaling,
-          maxHp: 60 * scaling,
-          speed: 2.0,
+          hp: 60 * hpScaling,
+          maxHp: 60 * hpScaling,
+          speed: 2.5 * speedScaling,
           shield: 0,
           maxShield: 0,
           armor: 0,
@@ -470,9 +480,9 @@ export default function GridlockDefense() {
         break;
       default:
         stats = {
-          hp: 60 * scaling,
-          maxHp: 60 * scaling,
-          speed: 1.5,
+          hp: 60 * hpScaling,
+          maxHp: 60 * hpScaling,
+          speed: 1.5 * speedScaling,
           shield: 0,
           maxShield: 0,
           armor: 2,
@@ -512,7 +522,6 @@ export default function GridlockDefense() {
         if (cell.type === "WALL") {
           ctx.fillStyle = "#334155";
           ctx.fillRect(px + 1, py + 1, CELL_SIZE - 2, CELL_SIZE - 2);
-
           ctx.fillStyle = "#1e293b";
           ctx.fillRect(px + 4, py + 4, CELL_SIZE - 8, CELL_SIZE - 8);
         } else if (cell.type.includes("TOWER")) {
@@ -631,14 +640,27 @@ export default function GridlockDefense() {
         g[endNode.current.y][endNode.current.x]
       );
 
-      if (path.length > 0) {
+      let trapsEnemy = false;
+      const end = g[endNode.current.y][endNode.current.x];
+      for (const en of enemies.current) {
+        if (en.type === "AIR") continue;
+        const enNode =
+          g[Math.floor(en.y / CELL_SIZE)][Math.floor(en.x / CELL_SIZE)];
+        const enPath = getPath(g, enNode, end);
+        if (enPath.length === 0) {
+          trapsEnemy = true;
+          break;
+        }
+      }
+
+      if (path.length > 0 && !trapsEnemy) {
         setMoney((m) => m - cost);
         if (selectedTool !== "WALL")
           towers.current.push({ x, y, type: selectedTool, lastShot: 0 });
         recalcPaths();
       } else {
         cell.type = originalType;
-        setMessage("Cannot block path!");
+        setMessage("Path blocked!");
         setTimeout(() => setMessage(""), 1000);
       }
     } else {
@@ -666,10 +688,7 @@ export default function GridlockDefense() {
         g[Math.floor(e.y / CELL_SIZE)][Math.floor(e.x / CELL_SIZE)];
 
       const newPath = getPath(g, currentGridNode, end, e.type === "AIR");
-
-      if (newPath.length > 0) {
-        e.path = newPath;
-      }
+      if (newPath.length > 0) e.path = newPath;
     });
   };
 
@@ -678,9 +697,10 @@ export default function GridlockDefense() {
     enemies.current = [];
     projectiles.current = [];
     towers.current = [];
-    setMoney(200);
+    setMoney(150);
     setLives(10);
     setWave(1);
+    waveRef.current = 1;
     setupWave(1);
     setGameOver(false);
     setIsPlaying(false);
@@ -692,7 +712,7 @@ export default function GridlockDefense() {
       <div className="flex flex-col w-full px-4 gap-2">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Shield className="text-cyan-400" /> Gridlock: Hardcore
+            <Shield className="text-cyan-400" /> Gridlock: Nightmare
           </h2>
           <div className="flex gap-6 text-xl font-mono font-bold">
             <span className="text-yellow-400 drop-shadow-md">CR: {money}</span>
@@ -738,7 +758,6 @@ export default function GridlockDefense() {
         )}
       </div>
 
-      
       <div className="flex flex-wrap items-center justify-center gap-4 w-full bg-gray-800/80 backdrop-blur p-4 rounded-xl border border-white/5">
         <button
           onClick={togglePlay}
@@ -777,7 +796,7 @@ export default function GridlockDefense() {
           onClick={() => setSelectedTool("TOWER_BASIC")}
           icon={Zap}
           label="Turret"
-          cost={60}
+          cost={50}
           color="bg-cyan-600"
           desc="Balanced"
         />
@@ -786,7 +805,7 @@ export default function GridlockDefense() {
           onClick={() => setSelectedTool("TOWER_RAPID")}
           icon={Shield}
           label="Blaster"
-          cost={220}
+          cost={200}
           color="bg-yellow-600"
           desc="Anti-Shield"
         />
@@ -795,7 +814,7 @@ export default function GridlockDefense() {
           onClick={() => setSelectedTool("TOWER_SNIPER")}
           icon={MousePointer2}
           label="Sniper"
-          cost={150}
+          cost={140}
           color="bg-red-600"
           desc="Anti-Armor"
         />
