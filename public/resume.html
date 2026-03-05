@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avilash Ghosh - Resume</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; color: #222; }
+.page { max-width: 860px; margin: 30px auto; background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
+/* HEADER */
+.header { background: #0f172a; color: #fff; padding: 36px 40px 28px; }
+.header h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: 0.5px; }
+.header .title { color: #7dd3fc; font-size: 1rem; font-weight: 500; margin: 4px 0 18px; letter-spacing: 1.5px; text-transform: uppercase; }
+.contact-row { display: flex; flex-wrap: wrap; gap: 14px 28px; font-size: 0.82rem; color: #cbd5e1; }
+.contact-row a { color: #7dd3fc; text-decoration: none; }
+.contact-row span { display: flex; align-items: center; gap: 5px; }
+/* BODY LAYOUT */
+.body { display: grid; grid-template-columns: 1fr 260px; }
+.main { padding: 32px 36px; border-right: 1px solid #e8ecf0; }
+.sidebar { padding: 28px 22px; background: #f8fafc; }
+/* SECTION */
+.section { margin-bottom: 28px; }
+.section-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #0ea5e9; border-bottom: 2px solid #0ea5e9; padding-bottom: 4px; margin-bottom: 14px; }
+/* SUMMARY */
+.summary p { font-size: 0.87rem; line-height: 1.7; color: #374151; }
+/* EXPERIENCE */
+.exp-item { margin-bottom: 20px; }
+.exp-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.exp-role { font-size: 1rem; font-weight: 700; color: #0f172a; }
+.exp-company { font-size: 0.88rem; color: #0ea5e9; font-weight: 600; }
+.exp-meta { font-size: 0.76rem; color: #6b7280; text-align: right; }
+.exp-desc { font-size: 0.83rem; color: #374151; line-height: 1.65; margin-top: 7px; }
+.exp-desc li { margin-left: 16px; margin-bottom: 3px; }
+/* PROJECTS */
+.proj-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.proj-tag { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 0.78rem; padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+/* ACHIEVEMENTS */
+.ach-item { font-size: 0.83rem; color: #374151; line-height: 1.6; margin-bottom: 6px; padding-left: 14px; position: relative; }
+.ach-item::before { content: '▸'; position: absolute; left: 0; color: #0ea5e9; font-size: 0.75rem; top: 2px; }
+/* SIDEBAR SECTIONS */
+.sb-section { margin-bottom: 24px; }
+.sb-title { font-size: 0.68rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #0ea5e9; border-bottom: 2px solid #0ea5e9; padding-bottom: 4px; margin-bottom: 12px; }
+/* SKILLS */
+.skill-group { margin-bottom: 10px; }
+.skill-label { font-size: 0.72rem; font-weight: 700; color: #475569; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.skill-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.skill-tag { background: #0f172a; color: #e2e8f0; font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; }
+/* EDUCATION */
+.edu-degree { font-size: 0.88rem; font-weight: 700; color: #0f172a; }
+.edu-school { font-size: 0.82rem; color: #0ea5e9; font-weight: 600; margin: 2px 0; }
+.edu-meta { font-size: 0.76rem; color: #6b7280; }
+/* INDUSTRIES */
+.industry-item { font-size: 0.78rem; color: #374151; padding: 3px 0; border-bottom: 1px dashed #e2e8f0; }
+.industry-item:last-child { border: none; }
+/* LANGUAGES / HOBBIES */
+.pill-list { display: flex; flex-wrap: wrap; gap: 5px; }
+.pill { background: #e0f2fe; color: #0369a1; font-size: 0.74rem; padding: 3px 9px; border-radius: 12px; }
+/* LINKS */
+.link-item { font-size: 0.78rem; margin-bottom: 6px; }
+.link-item a { color: #0ea5e9; text-decoration: none; word-break: break-all; }
+@media print {
+body { background: #fff; }
+.page { box-shadow: none; margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+<!-- HEADER -->
+<div class="header">
+<h1>Avilash Ghosh</h1>
+<div class="title">Full-Stack Developer &amp; UI/UX Designer</div>
+<div class="contact-row">
+<span><a href="mailto:avilash@fleapo.com">avilash@fleapo.com</a></span>
+<span>+91 7001940069</span>
+<span>Kolkata, India</span>
+<span><a href="https://www.linkedin.com/in/avilashg/" target="_blank">linkedin.com/in/avilashg</a></span>
+<span><a href="https://www.avilash.org/" target="_blank">avilash.org</a></span>
+<span><a href="https://github.com/Avilash-Fleapo" target="_blank">github.com/Avilash-Fleapo</a></span>
+</div>
+</div>
+<div class="body">
+<!-- MAIN COLUMN -->
+<div class="main">
+<!-- SUMMARY -->
+<div class="section summary">
+<div class="section-title">Professional Summary</div>
+<p>Versatile full-stack developer and UI/UX designer with 6+ years of experience building and optimizing web applications for agencies, startups, and remote teams. Proficient in React, Next.js, Node.js, Python, and cloud platforms (AWS, GCP), with strong design skills in Figma and Adobe XD. Proven track record of solving complex technical challenges—from cloud cost optimization and data recovery to real-time messaging and livestreaming systems—across education, AI, e-commerce, logistics, and media industries.</p>
+</div>
+<!-- EXPERIENCE -->
+<div class="section">
+<div class="section-title">Work Experience</div>
+<div class="exp-item">
+<div class="exp-header">
+<div>
+<div class="exp-role">Software Development Engineer II (SDE-2)</div>
+<div class="exp-company">Fleapo · Kolkata, India</div>
+</div>
+<div class="exp-meta">2021 – Present<br><span>4+ years</span></div>
+</div>
+<div class="exp-desc">
+<ul>
+<li>Led full-stack development across 10+ diverse digital products spanning education, AI, e-commerce, logistics, and entertainment sectors.</li>
+<li>Recovered corrupted mentor feedback data by backtracking database relations on Flute Gandharvas, preventing critical data loss.</li>
+<li>Optimized AWS infrastructure to reduce cloud costs by <strong>80–90%</strong> within 2 months through architecture improvements and resource tuning.</li>
+<li>Built real-time messaging and livestreaming modules for Fanfix, serving a growing creator-fan audience.</li>
+<li>Developed file and document upload module for AI Fiesta, enabling seamless file sharing with AI models.</li>
+<li>Designed and implemented a points-based e-shop feature on Flute Gandharvas, improving user engagement and monetization.</li>
+<li>Collaborated in cross-functional teams of 2–12, handling everything from architecture design to UI revamps.</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- KEY ACHIEVEMENTS -->
+<div class="section">
+<div class="section-title">Key Achievements</div>
+<div class="ach-item">Reduced AWS cloud costs by <strong>80–90%</strong> within 2 months through targeted infrastructure optimization on Flute Gandharvas.</div>
+<div class="ach-item">Recovered corrupted mentor feedback data by reverse-engineering complex database relations, preventing irreversible data loss.</div>
+<div class="ach-item">Architected and delivered real-time messaging and livestreaming features for Fanfix with low-latency performance.</div>
+<div class="ach-item">Built a scalable file/document upload module for AI Fiesta, bridging user documents with AI models seamlessly.</div>
+<div class="ach-item">Improved frontend code scalability and led UI revamp initiative on Flute Gandharvas platform.</div>
+</div>
+<!-- PROJECTS -->
+<div class="section">
+<div class="section-title">Projects</div>
+<style>
+.proj-item { margin-bottom: 18px; }
+.proj-name { font-size: 0.95rem; font-weight: 700; color: #0f172a; margin-bottom: 5px; }
+.proj-name span { display: inline-block; background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 0.72rem; padding: 1px 8px; border-radius: 12px; font-weight: 500; margin-left: 8px; vertical-align: middle; }
+.proj-bullets { list-style: none; padding: 0; margin: 0; }
+.proj-bullets li { font-size: 0.81rem; color: #374151; line-height: 1.6; padding-left: 14px; position: relative; margin-bottom: 2px; }
+.proj-bullets li::before { content: '▸'; position: absolute; left: 0; color: #0ea5e9; font-size: 0.72rem; top: 3px; }
+.proj-other { margin-top: 14px; }
+.proj-other-label { font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 7px; }
+</style>
+<div class="proj-item">
+<div class="proj-name">Fanfix <span>Creator Platform</span></div>
+<ul class="proj-bullets">
+<li>Developed paywall-gated social media platform with sharing, commenting, liking, and infinite-scroll video feed.</li>
+<li>Built realtime scalable messaging platform with file sharing, multimedia support, and full audio player controls.</li>
+<li>Developed paid livestream capabilities and a complete realtime chat system built for high scalability.</li>
+<li>Implemented AI moderation pipeline to filter user content and a DRM-style system to prevent unauthorised use of protected assets.</li>
+</ul>
+</div>
+<div class="proj-item">
+<div class="proj-name">Flute Gandharvas <span>EdTech</span></div>
+<ul class="proj-bullets">
+<li>Developed a script to remove data discrepancy from the database and restore correct data.</li>
+<li>Migrated all videos from MP4 to WebM for improved streaming performance.</li>
+<li>Refactored entity creation logic to be more granular, facilitating finer admin control.</li>
+<li>Developed an achievements feed for user interaction and engagement.</li>
+<li>Built an e-shop integrated with a third-party headless CMS, allowing users to purchase products by redeeming points.</li>
+<li>Optimised and refactored redundant modules to reduce tech debt and improve DX.</li>
+</ul>
+</div>
+<div class="proj-item">
+<div class="proj-name">Stymconnect <span>Music Tech</span></div>
+<ul class="proj-bullets">
+<li>Developed and deployed a full-stack music versioning platform using Symfony.</li>
+<li>Built version control system for music and stem files, with a cloud file storage solution for online storage.</li>
+<li>Developed a complete file sharing system with public and private access controls.</li>
+<li>Implemented realtime scalable messaging with file sharing and multimedia support.</li>
+<li>Built a tier-based subscription system with monthly and annual access, plus a bulk file download system for large files.</li>
+<li>Developed an audio player with full media controls; set up testing platform and stress tested all workflows.</li>
+<li>Deployed the platform using Vercel and AWS services.</li>
+</ul>
+</div>
+<div class="proj-item">
+<div class="proj-name">AI Fiesta <span>AI Platform</span></div>
+<ul class="proj-bullets">
+<li>Developed multi-format file sharing capability, enabling users to share documents with different AI models.</li>
+<li>Planned and restructured token logic and user limits across the platform.</li>
+<li>Implemented RBAC with custom claims for more secure authentication and authorisation.</li>
+</ul>
+</div>
+<div class="proj-item">
+<div class="proj-name">Teetime <span>Web Platform</span></div>
+<ul class="proj-bullets">
+<li>Developed an internationalisation system for improved accessibility across user regions.</li>
+<li>Built an e-commerce flow with custom saved lists to store user preferences.</li>
+<li>Integrated Strapi headless CMS to deliver a fully functional blog system.</li>
+<li>Optimised and refactored redundant modules to improve DX and reduce tech debt.</li>
+</ul>
+</div>
+<div class="proj-item">
+<div class="proj-name">IWAA Awards <span>Events</span></div>
+<ul class="proj-bullets">
+<li>Developed a full administration platform using Ant Design component library.</li>
+<li>Built a dynamic form system for collecting award nominations.</li>
+<li>Developed a bulk file download system and a bulk PDF generation system for nominations.</li>
+</ul>
+</div>
+<div class="proj-other">
+<div class="proj-other-label">Other Projects</div>
+<div class="proj-grid">
+<span class="proj-tag">Tagmango Level Up</span>
+<span class="proj-tag">Mio Amore</span>
+<span class="proj-tag">Recipe Cup</span>
+<span class="proj-tag">Zorrro</span>
+<span class="proj-tag">ScentCraft</span>
+<span class="proj-tag">Shikkha</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SIDEBAR -->
+<div class="sidebar">
+<!-- SKILLS -->
+<div class="sb-section">
+<div class="sb-title">Technical Skills</div>
+<div class="skill-group">
+<div class="skill-label">Frontend</div>
+<div class="skill-tags">
+<span class="skill-tag">HTML</span><span class="skill-tag">CSS</span><span class="skill-tag">JavaScript</span><span class="skill-tag">TypeScript</span><span class="skill-tag">React</span><span class="skill-tag">Next.js</span><span class="skill-tag">Vue</span><span class="skill-tag">React Native</span>
+</div>
+</div>
+<div class="skill-group">
+<div class="skill-label">Backend</div>
+<div class="skill-tags">
+<span class="skill-tag">Node.js</span><span class="skill-tag">Express</span><span class="skill-tag">NestJS</span><span class="skill-tag">Python</span><span class="skill-tag">Django</span><span class="skill-tag">PHP</span><span class="skill-tag">Laravel</span><span class="skill-tag">Symphony</span><span class="skill-tag">GraphQL</span>
+</div>
+</div>
+<div class="skill-group">
+<div class="skill-label">Database</div>
+<div class="skill-tags">
+<span class="skill-tag">SQL</span><span class="skill-tag">MongoDB</span>
+</div>
+</div>
+<div class="skill-group">
+<div class="skill-label">Cloud & DevOps</div>
+<div class="skill-tags">
+<span class="skill-tag">AWS</span><span class="skill-tag">GCP</span><span class="skill-tag">Docker</span>
+</div>
+</div>
+<div class="skill-group">
+<div class="skill-label">Design</div>
+<div class="skill-tags">
+<span class="skill-tag">Figma</span><span class="skill-tag">Adobe XD</span><span class="skill-tag">Photoshop</span>
+</div>
+</div>
+<div class="skill-group">
+<div class="skill-label">Other</div>
+<div class="skill-tags">
+<span class="skill-tag">C</span><span class="skill-tag">Java</span>
+</div>
+</div>
+</div>
+<!-- EDUCATION -->
+<div class="sb-section">
+<div class="sb-title">Education</div>
+<div class="edu-degree">MCA — Computer Application</div>
+<div class="edu-school">Siliguri Institute of Technology</div>
+<div class="edu-meta">2022 – 2024 · GPA: 7.58 / 10</div>
+<div style="margin-top:12px;">
+<div class="edu-degree">BCA — Computer Application</div>
+<div class="edu-school">Siliguri Institute of Technology</div>
+<div class="edu-meta">2019 – 2022 · GPA: 9.51 / 10</div>
+</div>
+<div style="margin-top:12px;">
+<div class="edu-degree">Senior Secondary (Class XII)</div>
+<div class="edu-school">RKMV Deoghar</div>
+<div class="edu-meta">2017 – 2019 · GPA: 8.0 / 10</div>
+</div>
+<div style="margin-top:12px;">
+<div class="edu-degree">Secondary (Class X)</div>
+<div class="edu-school">TIGPS Siliguri</div>
+<div class="edu-meta">2015 – 2017 · GPA: 9.5 / 10</div>
+</div>
+</div>
+<!-- INDUSTRIES -->
+<div class="sb-section">
+<div class="sb-title">Industries</div>
+<div class="industry-item">Education & E-Learning</div>
+<div class="industry-item">Artificial Intelligence & Tech</div>
+<div class="industry-item">Digital Content & Media</div>
+<div class="industry-item">E-Commerce & Retail</div>
+<div class="industry-item">Food & Beverage</div>
+<div class="industry-item">Logistics & Delivery</div>
+<div class="industry-item">Entertainment & Events</div>
+<div class="industry-item">Music & Creative Tools</div>
+</div>
+<!-- LANGUAGES -->
+<div class="sb-section">
+<div class="sb-title">Languages</div>
+<div class="pill-list">
+<span class="pill">Bengali</span>
+<span class="pill">English</span>
+<span class="pill">Hindi</span>
+</div>
+</div>
+<!-- HOBBIES -->
+<div class="sb-section">
+<div class="sb-title">Interests</div>
+<div class="pill-list">
+<span class="pill">Gaming</span>
+<span class="pill">Streaming</span>
+<span class="pill">Reading</span>
+<span class="pill">Swimming</span>
+<span class="pill">Singing</span>
+<span class="pill">Cricket</span>
+<span class="pill">Football</span>
+<span class="pill">Drawing</span>
+<span class="pill">Table Tennis</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

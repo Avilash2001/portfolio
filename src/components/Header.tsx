@@ -4,6 +4,7 @@ import Image from "next/image";
 import {
   Cog,
   Contact,
+  Download,
   FolderKanban,
   Gamepad,
   MenuIcon,
@@ -76,11 +77,20 @@ const Header = () => {
                 {item.name}
               </Link>
             ))}
+            <a
+              href="/resume.pdf"
+              download="Avilash_Ghosh_Resume.pdf"
+              className="cursor-pointer font-semibold w-full gradient-border p-6 flex items-center justify-center rounded-xl gap-3"
+              onClick={handleDrawerClose}
+            >
+              <Download size={20} />
+              Resume
+            </a>
           </div>
         </DrawerContent>
       </Drawer>
 
-      <div className="hidden lg:flex gap-10">
+      <div className="hidden lg:flex items-center gap-10">
         {headerItems.map((item) => (
           <Link
             className="text-xl cursor-pointer font-semibold hover:bg-gradient-to-r hover:from-[#FFCA30] hover:via-[#FF01A2] hover:to-[#B94DDC] hover:bg-clip-text hover:text-transparent"
@@ -90,6 +100,14 @@ const Header = () => {
             {item.name}
           </Link>
         ))}
+        <a
+          href="/resume.pdf"
+          download="Avilash_Ghosh_Resume.pdf"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg border border-white/20 hover:border-white/50 transition-colors"
+        >
+          <Download size={16} />
+          Resume
+        </a>
       </div>
     </nav>
   );
